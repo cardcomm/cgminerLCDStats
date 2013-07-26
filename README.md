@@ -11,6 +11,7 @@ If you feel this code is useful, please consider a donation to:
   shortcuts - PLEASE don't use my code as an example!  LOL 
 
  For more specifics about the display this code supports, see:
+ 
   http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info
   
   https://github.com/dangardner/pylcdsysinfo
