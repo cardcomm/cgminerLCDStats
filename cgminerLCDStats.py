@@ -14,6 +14,7 @@
 #  https://github.com/dangardner/pylcdsysinfo
 #  http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&hash=item1c2c6fc700
 
+import math
 import sys
 import time
 from pylcdsysinfo import BackgroundColours, TextColours, TextAlignment, TextLines, LCDSysInfo
@@ -86,13 +87,15 @@ def showSimplifiedScreen(client):
 
     # extract just the data we want from the API result
     hardwareErrors = str(result['SUMMARY'][0]['Hardware Errors'])
-    avgMhs = str(result['SUMMARY'][0]['MHS av'])
+    avg = int(result['SUMMARY'][0]['MHS av'])
+    avgStr = convertSize(avg)
+    avgMhs = "Average:" + avgStr
     
     display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
     
     display.display_text_on_line(1, minerPoolStatus, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(2, "Uptime: \t" + upTime, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
-    display.display_text_on_line(3, "Avg. Mhs/s: " + avgMhs, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
+    display.display_text_on_line(3, avgMhs, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(4, "Hardware Errors: " + hardwareErrors, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
 
 # END showSimplifiedScreen()
@@ -119,7 +122,9 @@ def showDefaultScreen(client):
     myNotify = client.command('notify', None) # get cgminer general status
 
     # extract just the data we want from the API result
-    avgMhs = "Avg:" + str(result['SUMMARY'][0]['MHS av']) + " Mh/s"
+    avg = int(result['SUMMARY'][0]['MHS av'])
+    avgStr = convertSize(avg)
+    avgMhs = "Avg:" + avgStr
     
     acceptedShares = "A:" + str(result['SUMMARY'][0]['Accepted'])
     rejectedShares = "R:" + str(result['SUMMARY'][0]['Rejected'])
@@ -143,6 +148,19 @@ def showDefaultScreen(client):
     display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.RED)
     
 # END showDefaultScreen()
+
+def convertSize(size):
+    size_name = (" Mh/s", " Gh/s", " Th/s", " Ph/s", " Eh/s", " Zh/s", " Yh/s")
+    i = int(math.floor(math.log(size,1024)))
+    p = math.pow(1024,i)
+    s = round(size/p,1)
+    
+    if (s > 0):
+        return '%s%s' % (s,size_name[i])
+    else:
+        return '0 Mh/s'
+        
+# END convertSize(size)
 
 #
 ## main body of application
@@ -206,6 +224,7 @@ while(True):
 
     except Exception as e:
         displayErrorScreen()
+        print e
         print notifyNotWell ## TODO
         time.sleep(errorRefreshDelay)
 
