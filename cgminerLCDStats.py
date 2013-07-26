@@ -1,5 +1,5 @@
 #
-# Simple script to read information from the cgminer APi and display it on
+# Simple script to read information from the cgminer API and display it on
 #  the AIDA64 LCD Smartie display
 #
 # Copyright 2013 Cardinal Communications
@@ -7,8 +7,7 @@
 #  BTC address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed
 #
 # Note: This script was very "quick and dirty", and I've taken some coding
-#  shortcuts - particularly in my use of global variables within methods.
-#  PLEASE don't use my code as an example!  LOL
+#  shortcuts - PLEASE don't use my code as an example!  LOL 
 #
 # For more specifics about the display this code supports, see:
 #  http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info
@@ -19,6 +18,7 @@ import sys
 import time
 from pylcdsysinfo import BackgroundColours, TextColours, TextAlignment, TextLines, LCDSysInfo
 from CgminerRPCClient import CgminerRPCClient
+from optparse import OptionParser
 
 #
 # Config section
@@ -26,14 +26,15 @@ from CgminerRPCClient import CgminerRPCClient
 cgminer_host = 'localhost' # change if accessing cgminer instance on another box in local network
 cgminer_port = 4028     # default port - change if your is different
 
-refreshDelay = 5 # number of seconds to wait brfore each screen refresh (aprox.)
+screenRefreshDelay = 30 # number of seconds to wait before each screen refresh (aprox.) - value overridden by command line parm
 errorRefreshDelay = 30 # number of seconds to wait brfore each ERROR screen refresh (aprox.)
+simpleDisplay = False # value overridden by command line parm
 
 #
 # call cgminer "notify" API to check for device not well error
 # function throws exception if hardware error is found
 #
-def getNotifications():
+def getNotifications(client):
     output=""
     result = client.command('notify', None)
     if result:
@@ -51,7 +52,7 @@ def getNotifications():
 #
 # call cgminer "pools" API to get status
 #
-def getMinerPoolStatus():
+def getMinerPoolStatus(client):
     output=""
     result = client.command('pools', None)
     if result:
@@ -67,7 +68,7 @@ def getMinerPoolStatus():
 #
 # call cgminer "STATS" API to get uptime
 #
-def getMinerPoolUptime():
+def getMinerPoolUptime(client):
         output = ""
         result = client.command('stats', None)
         if result:
@@ -80,7 +81,7 @@ def getMinerPoolUptime():
 #
 # Display simplified status info screen
 #
-def showSimplifiedScreen():
+def showSimplifiedScreen(client):
     result = client.command('summary', None) # get cgminer general status
 
     # extract just the data we want from the API result
@@ -91,7 +92,7 @@ def showSimplifiedScreen():
     
     display.display_text_on_line(1, minerPoolStatus, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(2, "Uptime: \t" + upTime, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
-    display.display_text_on_line(3, "Average Mhs/s: " + avgMhs, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
+    display.display_text_on_line(3, "Avg. Mhs/s: " + avgMhs, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(4, "Hardware Errors: " + hardwareErrors, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
 
 # END showSimplifiedScreen()
@@ -102,17 +103,17 @@ def showSimplifiedScreen():
 # (do lazy error handling - code needs to be refactored to remove API calls 
 #   from display functions for better error handling display)
 #
-def displayErrorSceen():
+def displayErrorScreen():
     display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
     display.display_text_on_line(3, "Error: Check Miner", True, (TextAlignment.LEFT), TextColours.RED)
     
-# END displayErrorSceen()
+# END displayErrorScreen()
 
 
 #
 # Display default status info screen (mimics cgminer text display where possible)
 #
-def showDefaultScreen():
+def showDefaultScreen(client):
     result = client.command('summary', None) # get cgminer general status
     
     myNotify = client.command('notify', None) # get cgminer general status
@@ -163,7 +164,7 @@ colorString = 0
 # print welcome message
 print "Welcome to cgminerLCDStats"
 print "Copyright 2013 Cardinal Communications"
-print "BTC Address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed""
+# print "BTC Address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed"
 
 
 # set up to call the cgminer API - create RPC client instance
@@ -173,22 +174,38 @@ output = ""
 
 while(True):
     
+    # parse the command line parms, if any
+    usage = "usage: %prog [options] arg"  # set up parser object for use
+    parser = OptionParser(usage)
+    
+    # setup command line options and help
+    parser.add_option("-s", "--simple", action="store_true", dest="simpleDisplay", default=False, help="Show simple display layout instead of default")
+    parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=30, help="REFRESHDELAY = Time delay between screen/API refresh")    
+    
+    # parse the arguments - stick the results in the simpleDisplay and screenRefreshDelay variables
+    (options, args) = parser.parse_args()    
+    simpleDisplay = options.simpleDisplay
+    screenRefreshDelay = int(options.refreshDelay)
+    errorRefreshDelay = screenRefreshDelay
+    
     try:
         # TODO move API calls from display screen methods and call the here instead?
-        minerPoolStatus = getMinerPoolStatus()
-        upTime = getMinerPoolUptime()
+        minerPoolStatus = getMinerPoolStatus(client)
+        upTime = getMinerPoolUptime(client)
         
-        notifyNotWell = getNotifications()
-            
-        showDefaultScreen() 
+        notifyNotWell = getNotifications(client)
         
-        #showSimplifiedScreen()
-        
-        time.sleep(refreshDelay) # Number of seconds to wait, aprox.
+        # display selected screen if command line option present
+        if simpleDisplay:
+            showSimplifiedScreen(client)
+        else:    
+            showDefaultScreen(client) 
+
+        time.sleep(int(screenRefreshDelay)) # Number of seconds to wait, aprox.
         
 
     except Exception as e:
-        displayErrorSceen()
+        displayErrorScreen()
         print notifyNotWell ## TODO
         time.sleep(errorRefreshDelay)
 
