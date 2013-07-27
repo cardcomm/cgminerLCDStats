@@ -122,7 +122,7 @@ def showDefaultScreen(client):
     myNotify = client.command('notify', None) # get cgminer general status
 
     # extract just the data we want from the API result
-    avg = int(result['SUMMARY'][0]['MHS av'])
+    avg = float(result['SUMMARY'][0]['MHS av'])
     avgStr = convertSize(avg)
     avgMhs = "Avg:" + avgStr
     
@@ -150,7 +150,7 @@ def showDefaultScreen(client):
 # END showDefaultScreen()
 
 def convertSize(size):
-    size_name = (" Mh/s", " Gh/s", " Th/s", " Ph/s", " Eh/s", " Zh/s", " Yh/s")
+    size_name = ("  Mh/s", "  Gh/s", "  Th/s", "  Ph/s", "  Eh/s", "  Zh/s", "  Yh/s")
     i = int(math.floor(math.log(size,1024)))
     p = math.pow(1024,i)
     s = round(size/p,1)
