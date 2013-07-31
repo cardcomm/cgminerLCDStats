@@ -18,44 +18,51 @@ import math
 import sys
 import time
 from pylcdsysinfo import BackgroundColours, TextColours, TextAlignment, TextLines, LCDSysInfo
-from CgminerRPCClient import CgminerRPCClient
+import CgminerRPCClient
 from optparse import OptionParser
 
 #
 # Config section
 #
-cgminer_host = 'localhost' # change if accessing cgminer instance on another box in local network
-cgminer_port = 4028     # default port - change if your is different
+global host
+global port
+
+host = '127.0.0.1' # change if accessing cgminer instance on another box in local network
+port = 4028     # default port - change if your is different
 
 screenRefreshDelay = 30 # number of seconds to wait before each screen refresh (aprox.) - value overridden by command line parm
-errorRefreshDelay = 30 # number of seconds to wait brfore each ERROR screen refresh (aprox.)
+errorRefreshDelay = 30 # number of seconds to wait before each ERROR screen refresh (aprox.)
 simpleDisplay = False # value overridden by command line parm
 
 #
 # call cgminer "notify" API to check for device not well error
+# return: 'Well' if device error not detected
 # function throws exception if hardware error is found
 #
-def getNotifications(client):
+def getDeviceWellStatus(notification):
     output=""
-    result = client.command('notify', None)
-    if result:
-        if (result['NOTIFY'][0]['Reason Not Well'] == 'None') or (str(result['NOTIFY'][0]['Last Not Well']) != '0'):
-            output = "None" #no "Not Well" notification
-            return 
-        else:
-            output += "Hardware Device Error Detected"
-            raise exception # let the exception handler display error screen
-    return output
     
-# END getNotifications()
+    if notification:
+        if (str(notification['NOTIFY'][0]['Last Not Well']) == '0') or (notification['STATUS'][0]['STATUS'] == 'S'):
+            output = "Well" # no "Not Well" notification, assume well
+            return output 
+        else:
+            output = "Hardware Device Error Detected"
+            raise exception("Hardware Device Error Detected")# let the exception handler display error screen
+
+    return output # should never be executed
+    
+# END getDeviceWellStatus()
     
 
 #
 # call cgminer "pools" API to get status
+# returns: URL of connected pool if found. 
+#   Thows exception if no pool found
 #
-def getMinerPoolStatus(client):
+def getMinerPoolStatusURL():
     output=""
-    result = client.command('pools', None)
+    result = CgminerRPCClient.command('pools', host, port)
     if result:
         if result['POOLS'][0]['Status'] == 'Alive':
             output += (result['POOLS'][0]['Stratum URL'])
@@ -63,37 +70,102 @@ def getMinerPoolStatus(client):
             raise exception # let the exception handler display error screen
             # output += "Warning NO Active Pool"
     return output
+
     
 # END getMinerPoolStatus()
 
+
 #
-# call cgminer "STATS" API to get uptime
+## call cgminer "summary" API
+# returns: json "summary" call results
+#  Throws exception if summary is emmpty
+# 
+def getMinerSummary():
+    output=""
+    result = CgminerRPCClient.command('summary', host, port)
+    if result:
+        return result
+    else:
+        print "No summary data found"
+        raise exception # let the exception handler display error screen
+            # output += "Warning NO Active Pool"
+ 
+# END getMinerSummary()
+
 #
-def getMinerPoolUptime(client):
+## call cgminer "notify" API
+# returns: json "notify" call results
+#  Throws exception if notify is empty
+# 
+def getMinerNotifications():
+    output=""
+    result = CgminerRPCClient.command('notify', host, port)
+    if result:
+        return result
+    else:
+        print "No notify data found"
+        raise exception # let the exception handler display error screen
+            # output += "Warning NO Active Pool"
+ 
+# END getMinerNotifications()
+
+#
+## call cgminer "stats" API
+# returns: json "stats" call results
+#  Throws exception if notify is empty
+# 
+def getMinerStats():
+    output=""
+    result = CgminerRPCClient.command('stats', host, port)
+    if result:
+        return result
+    else:
+        print "No stats data found"
+        raise exception # let the exception handler display error screen
+            # output += "Warning NO Active Pool"
+ 
+# END getMinerNotifications()
+
+
+
+
+#
+# call cgminer "STATS" API to get uptime TODO Deprecated?
+#
+def getMinerPoolUptime(stats):
         output = ""
-        result = client.command('stats', None)
-        if result:
-            uptime = result['STATS'][0]['Elapsed']
+        if stats:
+            uptime = stats['STATS'][0]['Elapsed']
             output = '%02d:%02d:%02d\n' % (uptime / 3600, (uptime / 60) % 60, uptime % 60)
         return output
         
 # END getMinerPoolUptime()
 
+
+
 #
 # Display simplified status info screen
 #
-def showSimplifiedScreen(client):
-    result = client.command('summary', None) # get cgminer general status
+def showSimplifiedScreen(summary):
 
     # extract just the data we want from the API result
-    hardwareErrors = str(result['SUMMARY'][0]['Hardware Errors'])
-    avg = int(result['SUMMARY'][0]['MHS av'])
+    hardwareErrors = str(summary['SUMMARY'][0]['Hardware Errors'])
+    avg = int(summary['SUMMARY'][0]['MHS av'])
     avgStr = convertSize(avg)
     avgMhs = "Average:" + avgStr
     
+    # set up to write to the LCD screen
+    #
+    # Init the LCD screen
+    display = LCDSysInfo()
+    display.dim_when_idle(False)
+    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK) # Refresh the background and make it black
+    display.set_brightness(255)
+    display.save_brightness(100, 255) 
+    
     display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
     
-    display.display_text_on_line(1, minerPoolStatus, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
+    display.display_text_on_line(1, str(poolURL), True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(2, "Uptime: \t" + upTime, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(3, avgMhs, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(4, "Hardware Errors: " + hardwareErrors, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
@@ -107,34 +179,62 @@ def showSimplifiedScreen(client):
 #   from display functions for better error handling display)
 #
 def displayErrorScreen():
+      
+    # set up to write to the LCD screen
+    #
+    # Init the LCD screen
+    display = LCDSysInfo()
+    display.dim_when_idle(False)
+    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK) # Refresh the background and make it black
+    display.set_brightness(255)
+    display.save_brightness(100, 255)
+    
     display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
     display.display_text_on_line(3, "Error: Check Miner", True, (TextAlignment.LEFT), TextColours.RED)
     
 # END displayErrorScreen()
 
 
+def convertSize(size):
+    size_name = ("  Mh/s", "  Gh/s", "  Th/s", "  Ph/s", "  Eh/s", "  Zh/s", "  Yh/s")
+    i = int(math.floor(math.log(size,1024)))
+    p = math.pow(1024,i)
+    s = round(size/p,1)
+    
+    if (s > 0):
+        return '%s%s' % (s,size_name[i])
+    else:
+        return '0 Mh/s'    
+        
+# END convertSize(size)
+
 #
 # Display default status info screen (mimics cgminer text display where possible)
 #
-def showDefaultScreen(client):
-    result = client.command('summary', None) # get cgminer general status
+def showDefaultScreen(summary):
     
-    myNotify = client.command('notify', None) # get cgminer general status
-
     # extract just the data we want from the API result
-    avg = float(result['SUMMARY'][0]['MHS av'])
+    avg = float(summary['SUMMARY'][0]['MHS av'])
     avgStr = convertSize(avg)
     avgMhs = "Avg:" + avgStr
     
-    acceptedShares = "A:" + str(result['SUMMARY'][0]['Accepted'])
-    rejectedShares = "R:" + str(result['SUMMARY'][0]['Rejected'])
-    hardwareErrors = "HW:" + str(result['SUMMARY'][0]['Hardware Errors'])
-    utility = "U:" + str(result['SUMMARY'][0]['Utility']) + "/m"
-    workUtility = "WU:" + str(result['SUMMARY'][0]['Work Utility']) + "/m"
-        
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
+    acceptedShares = "A:" + str(summary['SUMMARY'][0]['Accepted'])
+    rejectedShares = "R:" + str(summary['SUMMARY'][0]['Rejected'])
+    hardwareErrors = "HW:" + str(summary['SUMMARY'][0]['Hardware Errors'])
+    utility = "U:" + str(summary['SUMMARY'][0]['Utility']) + "/m"
+    workUtility = "WU:" + str(summary['SUMMARY'][0]['Work Utility']) + "/m"
     
-    display.display_text_on_line(1, minerPoolStatus, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
+    # set up to write to the LCD screen
+    #
+    # Init the LCD screen
+    display = LCDSysInfo()
+    display.dim_when_idle(False)
+    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK) # Refresh the background and make it black
+    display.set_brightness(255)
+    display.save_brightness(100, 255)
+    
+    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
+    display.display_text_on_line(1, str(poolURL), True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(2, "Uptime: \t" + upTime, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(3, avgMhs, True, (TextAlignment.LEFT), TextColours.RED)
     
@@ -147,86 +247,65 @@ def showDefaultScreen(client):
     line6String = workUtility
     display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.RED)
     
+    
 # END showDefaultScreen()
 
-def convertSize(size):
-    size_name = ("  Mh/s", "  Gh/s", "  Th/s", "  Ph/s", "  Eh/s", "  Zh/s", "  Yh/s")
-    i = int(math.floor(math.log(size,1024)))
-    p = math.pow(1024,i)
-    s = round(size/p,1)
-    
-    if (s > 0):
-        return '%s%s' % (s,size_name[i])
-    else:
-        return '0 Mh/s'
-        
-# END convertSize(size)
 
 #
 ## main body of application
-#    
-
-
-# set up to write to the LCD screen
 #
-# Init the LCD screen
-display = LCDSysInfo()
-display.dim_when_idle(False)
-display.clear_lines(TextLines.ALL, BackgroundColours.BLACK) # Refresh the background and make it black
-display.set_brightness(255)
-display.save_brightness(100, 255)
-# set up color flags
-colorflag = 0
-colorString = 0
 
-# print welcome message
-print "Welcome to cgminerLCDStats"
-print "Copyright 2013 Cardinal Communications"
-# print "BTC Address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed"
-
-
-# set up to call the cgminer API - create RPC client instance
-client = CgminerRPCClient(cgminer_host, cgminer_port)
-output = ""
-
-
-while(True):
+if __name__ == "__main__":
     
-    # parse the command line parms, if any
-    usage = "usage: %prog [options] arg"  # set up parser object for use
-    parser = OptionParser(usage)
+    # print welcome message
+    print "Welcome to cgminerLCDStats"
+    print "Copyright 2013 Cardinal Communications"
+    # print "BTC Address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed"
     
-    # setup command line options and help
-    parser.add_option("-s", "--simple", action="store_true", dest="simpleDisplay", default=False, help="Show simple display layout instead of default")
-    parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=30, help="REFRESHDELAY = Time delay between screen/API refresh")    
-    
-    # parse the arguments - stick the results in the simpleDisplay and screenRefreshDelay variables
-    (options, args) = parser.parse_args()    
-    simpleDisplay = options.simpleDisplay
-    screenRefreshDelay = int(options.refreshDelay)
-    errorRefreshDelay = screenRefreshDelay
-    
-    try:
-        # TODO move API calls from display screen methods and call the here instead?
-        minerPoolStatus = getMinerPoolStatus(client)
-        upTime = getMinerPoolUptime(client)
-        
-        notifyNotWell = getNotifications(client)
-        
-        # display selected screen if command line option present
-        if simpleDisplay:
-            showSimplifiedScreen(client)
-        else:    
-            showDefaultScreen(client) 
+    while(True):
 
-        time.sleep(int(screenRefreshDelay)) # Number of seconds to wait, aprox.
-        
+        # parse the command line parms, if any
+        usage = "usage: %prog [options] arg"  # set up parser object for use
+        parser = OptionParser(usage)
 
-    except Exception as e:
-        displayErrorScreen()
-        print e
-        print notifyNotWell ## TODO
-        time.sleep(errorRefreshDelay)
+        # setup command line options and help
+        parser.add_option("-s", "--simple", action="store_true", dest="simpleDisplay", default=False, help="Show simple display layout instead of default")
+        parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=30, help="REFRESHDELAY = Time delay between screen/API refresh")    
+
+        # parse the arguments - stick the results in the simpleDisplay and screenRefreshDelay variables
+        (options, args) = parser.parse_args()    
+        simpleDisplay = options.simpleDisplay
+        screenRefreshDelay = int(options.refreshDelay)
+        errorRefreshDelay = screenRefreshDelay
+
+        try:
+            notification = getMinerNotifications()
+
+            summary = getMinerSummary()
+
+            avg = int(summary['SUMMARY'][0]['MHS av'])
+
+            wellStatus = getDeviceWellStatus(notification)
+
+            poolURL = getMinerPoolStatusURL()
+
+            stats = getMinerStats()
+
+            upTime = getMinerPoolUptime(stats)
+
+            # display selected screen if command line option present
+            if simpleDisplay:
+                showSimplifiedScreen(summary)
+            else:    
+                showDefaultScreen(summary) 
+
+            time.sleep(int(screenRefreshDelay)) # Number of seconds to wait, aprox.
+
+
+        except Exception as e:
+            displayErrorScreen()
+            print e
+            time.sleep(errorRefreshDelay)
 
 
 
