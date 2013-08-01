@@ -18,7 +18,7 @@ Options:
                         REFRESHDELAY = Time delay between screen/API refresh 
                         
 Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code
-      He's a key developer on the cgminer project, and was a big help.
+      He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
       https://bitcointalk.org/index.php?action=profile;u=36044
                         
 Update 8/1/2013: Fixed bugs identified by Kano related to using too small a buffer size for the API data. 
