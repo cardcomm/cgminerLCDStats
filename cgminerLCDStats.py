@@ -48,7 +48,7 @@ def getDeviceWellStatus(notification):
             return output 
         else:
             output = "Hardware Device Error Detected"
-            raise exception("Hardware Device Error Detected")# let the exception handler display error screen
+            raise Exception("Hardware Device Error Detected")# let the exception handler display error screen
 
     return output # should never be executed
     
@@ -67,7 +67,7 @@ def getMinerPoolStatusURL():
         if result['POOLS'][0]['Status'] == 'Alive':
             output += (result['POOLS'][0]['Stratum URL'])
         else:
-            raise exception # let the exception handler display error screen
+            raise Exception("Warning NO Active Pool found") # let the exception handler display error screen
             # output += "Warning NO Active Pool"
     return output
 
@@ -87,8 +87,7 @@ def getMinerSummary():
         return result
     else:
         print "No summary data found"
-        raise exception # let the exception handler display error screen
-            # output += "Warning NO Active Pool"
+        raise Exception("No summary data found") # let the exception handler display error screen
  
 # END getMinerSummary()
 
@@ -104,8 +103,7 @@ def getMinerNotifications():
         return result
     else:
         print "No notify data found"
-        raise exception # let the exception handler display error screen
-            # output += "Warning NO Active Pool"
+        raise Exception ("API Error - No notify data found") # let the exception handler display error screen
  
 # END getMinerNotifications()
 
@@ -121,8 +119,7 @@ def getMinerStats():
         return result
     else:
         print "No stats data found"
-        raise exception # let the exception handler display error screen
-            # output += "Warning NO Active Pool"
+        raise Exception("No stats data found") # let the exception handler display error screen
  
 # END getMinerNotifications()
 
@@ -303,8 +300,10 @@ if __name__ == "__main__":
 
 
         except Exception as e:
-            displayErrorScreen()
+            print "Main Exception Handler: "
             print e
+            print
+            displayErrorScreen()
             time.sleep(errorRefreshDelay)
 
 

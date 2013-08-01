@@ -19,17 +19,19 @@ def command(command, host, port):
     time.sleep(0.03)
     data = s.recv(8192)
     s.close()
+    
   except Exception as e:
-    print "Error API command: "
+    print "API Exception executing command: " + command
     print str(e)
-    data = ''
+    raise Exception ("API Exception executing command: ", str(command), e)
+    
   if data:                   
         try:
             data = data.replace('\x00', '') # the null byte makes json decoding unhappy
             decoded = json.loads(data)      # we sent a json request, so expect json response
             return decoded
         except:
-            print "error decoding"
-            return None
-            #pass # restart makes it fail, but it's ok  ???
+            print "JSON decoding error - bad JSON sring:"
+            print data
+            pass # swallow the exception (normal use shouldn't throw one ?)
 
