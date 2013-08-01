@@ -17,7 +17,7 @@ Options:
   -d REFRESHDELAY, --refresh-delay=REFRESHDELAY                                                                                                                                                    
                         REFRESHDELAY = Time delay between screen/API refresh 
                         
-Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code
+Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
       He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
       https://bitcointalk.org/index.php?action=profile;u=36044
                         
