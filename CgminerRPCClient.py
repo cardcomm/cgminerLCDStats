@@ -16,15 +16,25 @@ def command(command, host, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     s.sendall(json.dumps({"command": command})) # send API request formatted as json
-    time.sleep(0.03)
-    data = s.recv(65433)
-    s.close()
+    time.sleep(0.02)
+
+    # loop until a zero byte indicates we got all the data
+    data = ""
+    while True:
+        buffer = s.recv(65535)
+        if '\x00' in buffer:
+            data += buffer # keep the buffer and bail from the loop - we got all the data
+            break # zero found, so we must have all the data TODO break in loop is ugl           
+        else:
+            data += buffer # No zero found yet, append current buffer to data and loop for more 
+    
+    s.close() # close the socket
     
   except Exception as e:
     print "API Exception executing command: " + command
     print str(e)
     raise Exception ("API Exception executing command: ", str(command), e)
-    
+  
   if data:                   
         try:
             data = data.replace('\x00', '') # the null byte makes json decoding unhappy

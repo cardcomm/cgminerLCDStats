@@ -6,8 +6,9 @@
 # If you feel this code is useful, please consider a donation to:
 #  BTC address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed
 #
-# Note: This script was very "quick and dirty", and I've taken some coding
-#  shortcuts - PLEASE don't use my code as an example!  LOL 
+# Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code
+#       He's a key developer on the cgminer project, and was a big help.
+#       https://bitcointalk.org/index.php?action=profile;u=36044
 #
 # For more specifics about the display this code supports, see:
 #  http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info
@@ -207,18 +208,18 @@ def convertSize(size):
 
 #
 # Display default status info screen (mimics cgminer text display where possible)
+#  NOTE: screen design courtesy of "Kano". Thanks man!
 #
 def showDefaultScreen(summary):
     
     # extract just the data we want from the API result
     avg = float(summary['SUMMARY'][0]['MHS av'])
     avgStr = convertSize(avg)
-    avgMhs = "Avg:" + avgStr
-    
-    acceptedShares = "A:" + str(summary['SUMMARY'][0]['Accepted'])
-    rejectedShares = "R:" + str(summary['SUMMARY'][0]['Rejected'])
-    hardwareErrors = "HW:" + str(summary['SUMMARY'][0]['Hardware Errors'])
-    utility = "U:" + str(summary['SUMMARY'][0]['Utility']) + "/m"
+    avgMhs = "Avg:" + avgStr + "  B:" + str(int(summary['SUMMARY'][0]['Found Blocks']))
+    acceptedShares = "A:" + str(int(summary['SUMMARY'][0]['Difficulty Accepted']))
+    rejectedShares = "R:" + str(int(summary['SUMMARY'][0]['Difficulty Rejected']))
+    hardwareErrors = "HW:" + str(int(summary['SUMMARY'][0]['Hardware Errors']))
+    utility = "S:" + str(int(summary['SUMMARY'][0]['Best Share']))
     workUtility = "WU:" + str(summary['SUMMARY'][0]['Work Utility']) + "/m"
     
     # set up to write to the LCD screen
