@@ -15,15 +15,15 @@ Options:
   -h, --help            show this help message and exit                                                                                                                                            
   -s, --simple          Show simple display layout instead of default                                                                                                                              
   -d REFRESHDELAY, --refresh-delay=REFRESHDELAY                                                                                                                                                    
-                        REFRESHDELAY = Time delay between screen/API refresh  
+                        REFRESHDELAY = Time delay between screen/API refresh 
                         
-UPDATE: 7/30/2013:
-Complete re-write of the cgminer API RPC code. Now seems to work reliably connecting to any
-cgminer instance on subnet. Will add command line support for setting cgminer IP in next revision.
-
-Refactored API calls from display code. Refined object handling in
-display code.
-
+Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code
+      He's a key developer on the cgminer project, and was a big help.
+      https://bitcointalk.org/index.php?action=profile;u=36044
+                        
+Update 8/1/2013: Fixed bugs identified by Kano related to using too small a buffer size for the API data. 
+Also updated default screen display to use the proper fields and a better layout, also per Kano
+                        
 
  For more specifics about the display this code supports, see:
  
