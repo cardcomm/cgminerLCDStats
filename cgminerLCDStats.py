@@ -29,6 +29,7 @@ global host
 global port
 
 host = '127.0.0.1' # change if accessing cgminer instance on another box in local network
+#host = '192.168.1.111' 
 port = 4028     # default port - change if your is different
 
 screenRefreshDelay = 30 # number of seconds to wait before each screen refresh (aprox.) - value overridden by command line parm
@@ -212,16 +213,25 @@ def convertSize(size):
 #
 def showDefaultScreen(summary):
     
-    # extract just the data we want from the API result
+    # extract just the data we want from the API result and
+    #  build up display strings for each using the data
     avg = float(summary['SUMMARY'][0]['MHS av'])
-    avgStr = convertSize(avg)
-    avgMhs = "Avg:" + avgStr + "  B:" + str(int(summary['SUMMARY'][0]['Found Blocks']))
-    acceptedShares = "A:" + str(int(summary['SUMMARY'][0]['Difficulty Accepted']))
-    rejectedShares = "R:" + str(int(summary['SUMMARY'][0]['Difficulty Rejected']))
+    avgMhs = convertSize(avg)
+    foundBlocks = str(int(summary['SUMMARY'][0]['Found Blocks']))    
+    difficultyAccepted = "A:" + str(int(summary['SUMMARY'][0]['Difficulty Accepted']))
+    difficultyRejected = "R:" + str(int(summary['SUMMARY'][0]['Difficulty Rejected']))
     hardwareErrors = "HW:" + str(int(summary['SUMMARY'][0]['Hardware Errors']))
-    utility = "S:" + str(int(summary['SUMMARY'][0]['Best Share']))
+    bestShare = "S:" + str(int(summary['SUMMARY'][0]['Best Share']))
     workUtility = "WU:" + str(summary['SUMMARY'][0]['Work Utility']) + "/m"
     
+    # build the display strings
+    line1String = str(poolURL)
+    line2String = "Uptime: \t" + upTime
+    line3String = "Avg:" + avgMhs + "  B:" + foundBlocks
+    line4String = difficultyAccepted + "   " + difficultyRejected
+    line5String = hardwareErrors + "   " + bestShare
+    line6String = workUtility
+        
     # set up to write to the LCD screen
     #
     # Init the LCD screen
@@ -231,18 +241,13 @@ def showDefaultScreen(summary):
     display.set_brightness(255)
     display.save_brightness(100, 255)
     
+    # clear screen and write all lines
     display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
-    display.display_text_on_line(1, str(poolURL), True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
-    display.display_text_on_line(2, "Uptime: \t" + upTime, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
-    display.display_text_on_line(3, avgMhs, True, (TextAlignment.LEFT), TextColours.RED)
-    
-    line4String = acceptedShares + "   " + rejectedShares
+    display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
+    display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)    
+    display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.RED)
     display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.RED)
-    
-    line5String = hardwareErrors + "   " + utility
     display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.RED)
-    
-    line6String = workUtility
     display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.RED)
     
     
@@ -258,7 +263,6 @@ if __name__ == "__main__":
     # print welcome message
     print "Welcome to cgminerLCDStats"
     print "Copyright 2013 Cardinal Communications"
-    # print "BTC Address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed"
     
     while(True):
 
