@@ -24,7 +24,7 @@ def command(command, host, port):
         buffer = s.recv(65535)
         if '\x00' in buffer:
             data += buffer # keep the buffer and bail from the loop - we got all the data
-            break # zero found, so we must have all the data TODO break in loop is ugl           
+            break # zero found, so we must have all the data TODO break in loop is ugly           
         else:
             data += buffer # No zero found yet, append current buffer to data and loop for more 
     

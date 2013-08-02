@@ -195,15 +195,15 @@ def displayErrorScreen():
 
 
 def convertSize(size):
-    size_name = ("  Mh/s", "  Gh/s", "  Th/s", "  Ph/s", "  Eh/s", "  Zh/s", "  Yh/s")
+    size_name = ("M", "G", "T", "P", "E", "Z", "Y")
     i = int(math.floor(math.log(size,1024)))
-    p = math.pow(1024,i)
+    p = math.pow(1000,i)
     s = round(size/p,1)
     
     if (s > 0):
         return '%s%s' % (s,size_name[i])
     else:
-        return '0 Mh/s'    
+        return '0 M'    
         
 # END convertSize(size)
 
@@ -221,13 +221,14 @@ def showDefaultScreen(summary):
     difficultyAccepted = "A:" + str(int(summary['SUMMARY'][0]['Difficulty Accepted']))
     difficultyRejected = "R:" + str(int(summary['SUMMARY'][0]['Difficulty Rejected']))
     hardwareErrors = "HW:" + str(int(summary['SUMMARY'][0]['Hardware Errors']))
-    bestShare = "S:" + str(int(summary['SUMMARY'][0]['Best Share']))
+    bestShare = "S:" + convertSize(int(summary['SUMMARY'][0]['Best Share']))
     workUtility = "WU:" + str(summary['SUMMARY'][0]['Work Utility']) + "/m"
     
     # build the display strings
     line1String = str(poolURL)
     line2String = "Uptime: \t" + upTime
-    line3String = "Avg:" + avgMhs + "  B:" + foundBlocks
+    line3String = "Avg:" + avgMhs + "h/s" + "  B:" + foundBlocks
+    #line3String = "Avg:" + avgMhs + "\tB:" + foundBlocks
     line4String = difficultyAccepted + "   " + difficultyRejected
     line5String = hardwareErrors + "   " + bestShare
     line6String = workUtility
