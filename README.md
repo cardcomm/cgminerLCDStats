@@ -20,6 +20,12 @@ Options:
 Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
       He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
       https://bitcointalk.org/index.php?action=profile;u=36044
+      
+Update 8/4/2013: Enhanced error display / fix pool URL display
+Added friendly error messages throughout. Fixed error handling to
+detect "no hardware" condition.
+
+Fixed bug in code that retrieved current mining pool URL.
                         
 Update 8/1/2013: Fixed bugs identified by Kano related to using too small a buffer size for the API data. 
 Also updated default screen display to use the proper fields and a better layout, also per Kano
