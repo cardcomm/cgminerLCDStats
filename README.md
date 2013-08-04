@@ -16,6 +16,7 @@ Options:
   -s, --simple          Show simple display layout instead of default
   -d REFRESHDELAY, --refresh-delay=REFRESHDELAY
                         REFRESHDELAY = Time delay between screen/API refresh
+                        
   -i HOST, --host=HOST  I.P. Address of cgminer API host
                         
 Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
