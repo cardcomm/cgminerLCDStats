@@ -217,7 +217,7 @@ def displayErrorScreen(e):
 def convertSize(size):
     try:
         size_name = ("M", "G", "T", "P", "E", "Z", "Y")
-        i = int(math.floor(math.log(size,1024)))
+        i = int(math.floor(math.log(size,1000)))
         p = math.pow(1000,i)
         s = round(size/p,1)
 
@@ -227,8 +227,9 @@ def convertSize(size):
             return '0 M' 
         
     # swallow any math exceptions and just return 0 M
-    except:
+    except Exception as e:
         # TODO conditional log real error
+        #print str(e)
         return '0 M'
 
 # END convertSize(size)
@@ -264,7 +265,6 @@ def showDefaultScreen(summary):
     # Init the LCD screen
     display = LCDSysInfo()
     display.dim_when_idle(False)
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK) # Refresh the background and make it black
     display.set_brightness(255)
     display.save_brightness(100, 255)
     
@@ -299,12 +299,14 @@ if __name__ == "__main__":
 
         # setup command line options and help
         parser.add_option("-s", "--simple", action="store_true", dest="simpleDisplay", default=False, help="Show simple display layout instead of default")
-        parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=30, help="REFRESHDELAY = Time delay between screen/API refresh")    
+        parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=30, help="REFRESHDELAY = Time delay between screen/API refresh") 
+        parser.add_option("-i", "--host", type="str", dest="host", default=host, help="I.P. Address of cgminer API host")
 
         # parse the arguments - stick the results in the simpleDisplay and screenRefreshDelay variables
         (options, args) = parser.parse_args()    
         simpleDisplay = options.simpleDisplay
         screenRefreshDelay = int(options.refreshDelay)
+        host = options.host
         errorRefreshDelay = screenRefreshDelay
         
         try:
