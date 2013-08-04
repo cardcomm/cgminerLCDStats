@@ -18,6 +18,7 @@
 import math
 import sys
 import time
+import json
 from pylcdsysinfo import BackgroundColours, TextColours, TextAlignment, TextLines, LCDSysInfo
 import CgminerRPCClient
 from optparse import OptionParser
@@ -29,7 +30,7 @@ global host
 global port
 
 host = '127.0.0.1' # change if accessing cgminer instance on another box in local network
-#host = '192.168.1.111' 
+# host = '192.168.1.111' 
 port = 4028     # default port - change if your is different
 
 screenRefreshDelay = 30 # number of seconds to wait before each screen refresh (aprox.) - value overridden by command line parm
@@ -43,14 +44,21 @@ simpleDisplay = False # value overridden by command line parm
 #
 def getDeviceWellStatus(notification):
     output=""
+   
+    if(notification['STATUS'][0]['STATUS'] == 'S'): # all OK
+        #print "hardware status ok"
+        output = "Well"
+        return output
     
-    if notification:
-        if (str(notification['NOTIFY'][0]['Last Not Well']) == '0') or (notification['STATUS'][0]['STATUS'] == 'S'):
-            output = "Well" # no "Not Well" notification, assume well
-            return output 
-        else:
-            output = "Hardware Device Error Detected"
-            raise Exception("Hardware Device Error Detected")# let the exception handler display error screen
+    elif (notification['STATUS'][0]['STATUS'] == 'E'): # hardware error
+        print "hardware device error detected:"
+        output = str(notification['STATUS'][0]['Msg'])
+        print str(notification['STATUS'][0]['Msg']) # TODO conditional log
+        raise Exception(str(output)) # go to error screen
+     
+    else:
+        output = "Uknown Device Error Detected"
+        raise Exception("Uknown Device Error Detected")# let the exception handler display error screen
 
     return output # should never be executed
     
@@ -63,16 +71,24 @@ def getDeviceWellStatus(notification):
 #   Thows exception if no pool found
 #
 def getMinerPoolStatusURL():
-    output=""
-    result = CgminerRPCClient.command('pools', host, port)
+    
+    poolURL = ""
+    allPools = []    
+    
+    result = CgminerRPCClient.command('pools', host, port)   
+    
     if result:
-        if result['POOLS'][0]['Status'] == 'Alive':
-            output += (result['POOLS'][0]['Stratum URL'])
-        else:
-            raise Exception("Warning NO Active Pool found") # let the exception handler display error screen
-            # output += "Warning NO Active Pool"
-    return output
+        for items in result: # iterate over entire result to find POOLS collection
+            if items == "POOLS":
+                for i in result[items]: # found POOLS collection
+                    allPools.append(i) # build list of all pools
 
+    # iterate over list of pools till we find the active one, then get the URL
+    for thisPool in allPools:
+        if thisPool['Stratum Active'] == True and thisPool['Status'] == 'Alive':
+            poolURL = thisPool['Stratum URL']
+ 
+    return poolURL
     
 # END getMinerPoolStatus()
 
@@ -86,6 +102,7 @@ def getMinerSummary():
     output=""
     result = CgminerRPCClient.command('summary', host, port)
     if result:
+        #print json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
         return result
     else:
         print "No summary data found"
@@ -102,6 +119,7 @@ def getMinerNotifications():
     output=""
     result = CgminerRPCClient.command('notify', host, port)
     if result:
+        #print json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
         return result
     else:
         print "No notify data found"
@@ -118,6 +136,7 @@ def getMinerStats():
     output=""
     result = CgminerRPCClient.command('stats', host, port)
     if result:
+        #print json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
         return result
     else:
         print "No stats data found"
@@ -177,7 +196,7 @@ def showSimplifiedScreen(summary):
 # (do lazy error handling - code needs to be refactored to remove API calls 
 #   from display functions for better error handling display)
 #
-def displayErrorScreen():
+def displayErrorScreen(e):
       
     # set up to write to the LCD screen
     #
@@ -190,21 +209,28 @@ def displayErrorScreen():
     
     display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
     display.display_text_on_line(3, "Error: Check Miner", True, (TextAlignment.LEFT), TextColours.RED)
+    display.display_text_on_line(4, e, True, (TextAlignment.LEFT), TextColours.RED)
     
 # END displayErrorScreen()
 
 
 def convertSize(size):
-    size_name = ("M", "G", "T", "P", "E", "Z", "Y")
-    i = int(math.floor(math.log(size,1024)))
-    p = math.pow(1000,i)
-    s = round(size/p,1)
-    
-    if (s > 0):
-        return '%s%s' % (s,size_name[i])
-    else:
-        return '0 M'    
+    try:
+        size_name = ("M", "G", "T", "P", "E", "Z", "Y")
+        i = int(math.floor(math.log(size,1024)))
+        p = math.pow(1000,i)
+        s = round(size/p,1)
+
+        if (s > 0):
+            return '%s%s' % (s,size_name[i])
+        else:
+            return '0 M' 
         
+    # swallow any math exceptions and just return 0 M
+    except:
+        # TODO conditional log real error
+        return '0 M'
+
 # END convertSize(size)
 
 #
@@ -265,8 +291,8 @@ if __name__ == "__main__":
     print "Welcome to cgminerLCDStats"
     print "Copyright 2013 Cardinal Communications"
     
+    
     while(True):
-
         # parse the command line parms, if any
         usage = "usage: %prog [options] arg"  # set up parser object for use
         parser = OptionParser(usage)
@@ -280,7 +306,7 @@ if __name__ == "__main__":
         simpleDisplay = options.simpleDisplay
         screenRefreshDelay = int(options.refreshDelay)
         errorRefreshDelay = screenRefreshDelay
-
+        
         try:
             notification = getMinerNotifications()
 
@@ -299,7 +325,7 @@ if __name__ == "__main__":
             # display selected screen if command line option present
             if simpleDisplay:
                 showSimplifiedScreen(summary)
-            else:    
+            else:
                 showDefaultScreen(summary) 
 
             time.sleep(int(screenRefreshDelay)) # Number of seconds to wait, aprox.
@@ -307,10 +333,11 @@ if __name__ == "__main__":
 
         except Exception as e:
             print "Main Exception Handler: "
-            print e
+            print str(e)
             print
-            displayErrorScreen()
+            displayErrorScreen(str(e))
             time.sleep(errorRefreshDelay)
+
 
 
 

@@ -32,8 +32,8 @@ def command(command, host, port):
     
   except Exception as e:
     print "API Exception executing command: " + command
-    print str(e)
-    raise Exception ("API Exception executing command: ", str(command), e)
+    print str(e) # TODO conditonal logging
+    raise Exception ("API Connection Error")
   
   if data:                   
         try:
@@ -41,6 +41,7 @@ def command(command, host, port):
             decoded = json.loads(data)      # we sent a json request, so expect json response
             return decoded
         except:
+            # TODO conditional loggging
             print "JSON decoding error - bad JSON sring:"
             print data
             pass # swallow the exception (normal use shouldn't throw one ?)
