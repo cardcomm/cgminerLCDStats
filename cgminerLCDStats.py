@@ -224,13 +224,13 @@ def convertSize(size):
         if (s > 0):
             return '%s%s' % (s,size_name[i-1])
         else:
-            return '0 M' 
+            return '0' 
         
     # swallow any math exceptions and just return 0 M
     except Exception as e:
         # TODO conditional log real error
         #print str(e)
-        return '0 M'
+        return '0'
 
 # END convertSize(size)
 
