@@ -170,7 +170,7 @@ def showSimplifiedScreen(firstTime, summary):
     hardwareErrors = str(summary['SUMMARY'][0]['Hardware Errors'])
     avg = int(summary['SUMMARY'][0]['MHS av'])
     avgStr = convertSize(avg*1000000.0)
-    avgMhs = "Average:" + avgStr
+    avgMhs = "Average: " + avgStr
     
     # set up to write to the LCD screen
     #
@@ -185,8 +185,8 @@ def showSimplifiedScreen(firstTime, summary):
 
     display.display_text_on_line(1, str(poolURL), True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(2, "Uptime: \t" + upTime, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
-    display.display_text_on_line(3, avgMhs, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
-    display.display_text_on_line(4, "Hardware Errors: " + hardwareErrors, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
+    display.display_text_on_line(3, avgMhs, True, TextAlignment.LEFT, TextColours.LIGHT_BLUE)
+    display.display_text_on_line(4, "HW Errors: " + hardwareErrors, True, TextAlignment.LEFT, TextColours.LIGHT_BLUE)
 
 # END showSimplifiedScreen()
 
