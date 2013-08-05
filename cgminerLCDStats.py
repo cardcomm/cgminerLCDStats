@@ -18,6 +18,7 @@
 import math
 import sys
 import time
+import datetime
 import json
 from pylcdsysinfo import BackgroundColours, TextColours, TextAlignment, TextLines, LCDSysInfo
 import CgminerRPCClient
@@ -250,9 +251,11 @@ def showDefaultScreen(firstTime, summary):
     hardwareErrors = "HW:" + str(int(summary['SUMMARY'][0]['Hardware Errors']))
     bestShare = "S:" + convertSize(int(summary['SUMMARY'][0]['Best Share']))
     workUtility = "WU:" + str(summary['SUMMARY'][0]['Work Utility']) + "/m"
+
+    theTime = str(datetime.datetime.now()).split(' ')[1].split('.')[0]
     
     # build the display strings
-    line1String = str(poolURL)
+    line1String = str(poolURL) + "\t" + theTime
     line2String = "Uptime: \t" + upTime
     line3String = "Avg:" + avgMhs + "h/s" + "  B:" + foundBlocks
     #line3String = "Avg:" + avgMhs + "\tB:" + foundBlocks
@@ -273,12 +276,12 @@ def showDefaultScreen(firstTime, summary):
         display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
 
     # write all lines
-    display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
+    display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.YELLOW)
     display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)    
-    display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.RED)
-    display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.RED)
-    display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.RED)
-    display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.RED)
+    display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.GREEN)
+    display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.GREEN)
+    display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.GREEN)
+    display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.GREEN)
     
     
 # END showDefaultScreen()
