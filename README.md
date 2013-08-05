@@ -56,4 +56,4 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR 
 IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-Please check the library code modules pylcdsysinfo.py and CgminerRPCClient.py for their respective copyright and author information.
+Please check the library code module "pylcdsysinfo.py" for copyright and author information.
