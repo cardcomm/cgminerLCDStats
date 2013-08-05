@@ -186,7 +186,7 @@ def showSimplifiedScreen(firstTime, summary):
 
     display.display_text_on_line(1, str(poolURL), True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(2, "Uptime: \t" + upTime, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
-    display.display_text_on_line(3, avgMhs, True, TextAlignment.LEFT, TextColours.LIGHT_BLUE)
+    display.display_text_on_line(3, avgMhs + "h/s", True, TextAlignment.LEFT, TextColours.LIGHT_BLUE)
     display.display_text_on_line(4, "HW Errors: " + hardwareErrors, True, TextAlignment.LEFT, TextColours.LIGHT_BLUE)
 
 # END showSimplifiedScreen()
