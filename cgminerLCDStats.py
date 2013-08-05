@@ -164,12 +164,12 @@ def getMinerPoolUptime(stats):
 #
 # Display simplified status info screen
 #
-def showSimplifiedScreen(summary):
+def showSimplifiedScreen(firstTime, summary):
 
     # extract just the data we want from the API result
     hardwareErrors = str(summary['SUMMARY'][0]['Hardware Errors'])
     avg = int(summary['SUMMARY'][0]['MHS av'])
-    avgStr = convertSize(avg)
+    avgStr = convertSize(avg*1000000.0)
     avgMhs = "Average:" + avgStr
     
     # set up to write to the LCD screen
@@ -177,12 +177,12 @@ def showSimplifiedScreen(summary):
     # Init the LCD screen
     display = LCDSysInfo()
     display.dim_when_idle(False)
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK) # Refresh the background and make it black
     display.set_brightness(255)
     display.save_brightness(100, 255) 
     
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
-    
+    if (firstTime == True):
+        display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
+
     display.display_text_on_line(1, str(poolURL), True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(2, "Uptime: \t" + upTime, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(3, avgMhs, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
@@ -203,10 +203,10 @@ def displayErrorScreen(e):
     # Init the LCD screen
     display = LCDSysInfo()
     display.dim_when_idle(False)
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK) # Refresh the background and make it black
     display.set_brightness(255)
     display.save_brightness(100, 255)
     
+    # Always clear the whole screen
     display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
     display.display_text_on_line(3, "Error: Check Miner", True, (TextAlignment.LEFT), TextColours.RED)
     display.display_text_on_line(4, e, True, (TextAlignment.LEFT), TextColours.RED)
@@ -238,7 +238,7 @@ def convertSize(size):
 # Display default status info screen (mimics cgminer text display where possible)
 #  NOTE: screen design courtesy of "Kano". Thanks man!
 #
-def showDefaultScreen(summary):
+def showDefaultScreen(firstTime, summary):
     
     # extract just the data we want from the API result and
     #  build up display strings for each using the data
@@ -268,8 +268,11 @@ def showDefaultScreen(summary):
     display.set_brightness(255)
     display.save_brightness(100, 255)
     
-    # clear screen and write all lines
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
+    if (firstTime == True):
+        # clear screen
+        display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
+
+    # write all lines
     display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)    
     display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.RED)
@@ -291,6 +294,7 @@ if __name__ == "__main__":
     print "Welcome to cgminerLCDStats"
     print "Copyright 2013 Cardinal Communications"
     
+    firstTime = True
     
     while(True):
         # parse the command line parms, if any
@@ -326,9 +330,11 @@ if __name__ == "__main__":
 
             # display selected screen if command line option present
             if simpleDisplay:
-                showSimplifiedScreen(summary)
+                showSimplifiedScreen(firstTime, summary)
             else:
-                showDefaultScreen(summary) 
+                showDefaultScreen(firstTime, summary) 
+
+            firstTime = False
 
             time.sleep(int(screenRefreshDelay)) # Number of seconds to wait, aprox.
 
