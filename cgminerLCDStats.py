@@ -85,8 +85,8 @@ def getMinerPoolStatusURL():
 
     # iterate over list of pools till we find the active one, then get the URL
     for thisPool in allPools:
-        if thisPool['Stratum Active'] == True and thisPool['Status'] == 'Alive':
-            poolURL = thisPool['Stratum URL']
+        if thisPool['Priority'] == 0:
+            poolURL = thisPool['URL'].split('/')[2].split(':')[0]
  
     return poolURL
     
