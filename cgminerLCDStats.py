@@ -216,13 +216,13 @@ def displayErrorScreen(e):
 
 def convertSize(size):
     try:
-        size_name = ("M", "G", "T", "P", "E", "Z", "Y")
+        size_name = ("k", "M", "G", "T", "P", "E", "Z", "Y")
         i = int(math.floor(math.log(size,1000)))
         p = math.pow(1000,i)
         s = round(size/p,1)
 
         if (s > 0):
-            return '%s%s' % (s,size_name[i])
+            return '%s%s' % (s,size_name[i-1])
         else:
             return '0 M' 
         
@@ -243,7 +243,7 @@ def showDefaultScreen(summary):
     # extract just the data we want from the API result and
     #  build up display strings for each using the data
     avg = float(summary['SUMMARY'][0]['MHS av'])
-    avgMhs = convertSize(avg)
+    avgMhs = convertSize(avg*1000000.0)
     foundBlocks = str(int(summary['SUMMARY'][0]['Found Blocks']))    
     difficultyAccepted = "A:" + str(int(summary['SUMMARY'][0]['Difficulty Accepted']))
     difficultyRejected = "R:" + str(int(summary['SUMMARY'][0]['Difficulty Rejected']))
