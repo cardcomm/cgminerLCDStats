@@ -14,10 +14,8 @@ Get the "git" utility for downloading packages:
 sudo pacman -S git
 
 Make sure we have all the latest MinePeon packages:
-
 cd /opt/minepeon/
 git pull
-
 cd /opt/minepeon/http/
 git pull
 
