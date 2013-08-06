@@ -8,7 +8,7 @@ Ok, let's get started. Log on to your Pi with this command:
 ssh minepeon@YOURIP    - example: ssh minepeon@192.168.1.111
 
 Make sure the OS is up to date:  
-sudo pacman -Syu
+`sudo pacman -Syu`
 
 Get the "git" utility for downloading packages:  
 sudo pacman -S git
