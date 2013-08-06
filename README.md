@@ -32,11 +32,10 @@ Also updated default screen display to use the proper fields and a better layout
                         
 
  For more specifics about the display this code supports, see:  
-  http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info
-  
+  http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info  
   https://github.com/dangardner/pylcdsysinfo
   
-  You can purchase one here:  
+ You can purchase one here:  
   http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&hash=item1c2c6fc700
 
 
