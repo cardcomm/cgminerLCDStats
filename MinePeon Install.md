@@ -8,12 +8,15 @@ Ok, let's get started. Log on to your Pi with this command:
 ssh minepeon@YOURIP    - example: ssh minepeon@192.168.1.111
 
 Make sure the OS is up to date:
+
 sudo pacman -Syu
 
 Get the "git" utility for downloading packages:
+
 sudo pacman -S git
 
 Make sure we have all the latest MinePeon packages:
+
 cd /opt/minepeon/
 git pull
 
@@ -21,15 +24,18 @@ cd /opt/minepeon/http/
 git pull
 
 Optional: Verify Python2 is already installed (it should be) - current version is Python 2.7.5:
+
 python2 -V
 
 Install pyUSB library:
+
 cd ~
 git clone https://github.com/walac/pyusb.git
 cd pyusb
 sudo python2 setup.py install
 
 Install the cgminerLCDStats.py script and required modules:
+
 cd ~
 git clone https://github.com/cardcomm/cgminerLCDStats.git
 cd cgminerLCDStats
