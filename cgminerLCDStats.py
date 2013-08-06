@@ -18,6 +18,7 @@
 import math
 import sys
 import time
+import datetime
 import json
 from pylcdsysinfo import BackgroundColours, TextColours, TextAlignment, TextLines, LCDSysInfo
 import CgminerRPCClient
@@ -85,8 +86,8 @@ def getMinerPoolStatusURL():
 
     # iterate over list of pools till we find the active one, then get the URL
     for thisPool in allPools:
-        if thisPool['Stratum Active'] == True and thisPool['Status'] == 'Alive':
-            poolURL = thisPool['Stratum URL']
+        if thisPool['Priority'] == 0:
+            poolURL = thisPool['URL'].split('/')[2].split(':')[0]
  
     return poolURL
     
@@ -164,29 +165,29 @@ def getMinerPoolUptime(stats):
 #
 # Display simplified status info screen
 #
-def showSimplifiedScreen(summary):
+def showSimplifiedScreen(firstTime, summary):
 
     # extract just the data we want from the API result
     hardwareErrors = str(summary['SUMMARY'][0]['Hardware Errors'])
     avg = int(summary['SUMMARY'][0]['MHS av'])
-    avgStr = convertSize(avg)
-    avgMhs = "Average:" + avgStr
+    avgStr = convertSize(avg*1000000.0)
+    avgMhs = "Average: " + avgStr
     
     # set up to write to the LCD screen
     #
     # Init the LCD screen
     display = LCDSysInfo()
     display.dim_when_idle(False)
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK) # Refresh the background and make it black
     display.set_brightness(255)
     display.save_brightness(100, 255) 
     
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
-    
+    if (firstTime == True):
+        display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
+
     display.display_text_on_line(1, str(poolURL), True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
     display.display_text_on_line(2, "Uptime: \t" + upTime, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
-    display.display_text_on_line(3, avgMhs, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
-    display.display_text_on_line(4, "Hardware Errors: " + hardwareErrors, True, (TextAlignment.RIGHT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)
+    display.display_text_on_line(3, avgMhs + "h/s", True, TextAlignment.LEFT, TextColours.LIGHT_BLUE)
+    display.display_text_on_line(4, "HW Errors: " + hardwareErrors, True, TextAlignment.LEFT, TextColours.LIGHT_BLUE)
 
 # END showSimplifiedScreen()
 
@@ -203,10 +204,10 @@ def displayErrorScreen(e):
     # Init the LCD screen
     display = LCDSysInfo()
     display.dim_when_idle(False)
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK) # Refresh the background and make it black
     display.set_brightness(255)
     display.save_brightness(100, 255)
     
+    # Always clear the whole screen
     display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
     display.display_text_on_line(3, "Error: Check Miner", True, (TextAlignment.LEFT), TextColours.RED)
     display.display_text_on_line(4, e, True, (TextAlignment.LEFT), TextColours.RED)
@@ -216,21 +217,21 @@ def displayErrorScreen(e):
 
 def convertSize(size):
     try:
-        size_name = ("M", "G", "T", "P", "E", "Z", "Y")
+        size_name = ("k", "M", "G", "T", "P", "E", "Z", "Y")
         i = int(math.floor(math.log(size,1000)))
         p = math.pow(1000,i)
         s = round(size/p,1)
 
         if (s > 0):
-            return '%s%s' % (s,size_name[i])
+            return '%s%s' % (s,size_name[i-1])
         else:
-            return '0 M' 
+            return '0' 
         
     # swallow any math exceptions and just return 0 M
     except Exception as e:
         # TODO conditional log real error
         #print str(e)
-        return '0 M'
+        return '0'
 
 # END convertSize(size)
 
@@ -238,21 +239,23 @@ def convertSize(size):
 # Display default status info screen (mimics cgminer text display where possible)
 #  NOTE: screen design courtesy of "Kano". Thanks man!
 #
-def showDefaultScreen(summary):
+def showDefaultScreen(firstTime, summary):
     
     # extract just the data we want from the API result and
     #  build up display strings for each using the data
     avg = float(summary['SUMMARY'][0]['MHS av'])
-    avgMhs = convertSize(avg)
+    avgMhs = convertSize(avg*1000000.0)
     foundBlocks = str(int(summary['SUMMARY'][0]['Found Blocks']))    
     difficultyAccepted = "A:" + str(int(summary['SUMMARY'][0]['Difficulty Accepted']))
     difficultyRejected = "R:" + str(int(summary['SUMMARY'][0]['Difficulty Rejected']))
     hardwareErrors = "HW:" + str(int(summary['SUMMARY'][0]['Hardware Errors']))
     bestShare = "S:" + convertSize(int(summary['SUMMARY'][0]['Best Share']))
     workUtility = "WU:" + str(summary['SUMMARY'][0]['Work Utility']) + "/m"
+
+    theTime = str(datetime.datetime.now()).split(' ')[1].split('.')[0]
     
     # build the display strings
-    line1String = str(poolURL)
+    line1String = str(poolURL) + "\t" + theTime
     line2String = "Uptime: \t" + upTime
     line3String = "Avg:" + avgMhs + "h/s" + "  B:" + foundBlocks
     #line3String = "Avg:" + avgMhs + "\tB:" + foundBlocks
@@ -268,14 +271,17 @@ def showDefaultScreen(summary):
     display.set_brightness(255)
     display.save_brightness(100, 255)
     
-    # clear screen and write all lines
-    display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
-    display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)
+    if (firstTime == True):
+        # clear screen
+        display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
+
+    # write all lines
+    display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.YELLOW)
     display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)    
-    display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.RED)
-    display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.RED)
-    display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.RED)
-    display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.RED)
+    display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.GREEN)
+    display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.GREEN)
+    display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.GREEN)
+    display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.GREEN)
     
     
 # END showDefaultScreen()
@@ -291,6 +297,7 @@ if __name__ == "__main__":
     print "Welcome to cgminerLCDStats"
     print "Copyright 2013 Cardinal Communications"
     
+    firstTime = True
     
     while(True):
         # parse the command line parms, if any
@@ -326,9 +333,11 @@ if __name__ == "__main__":
 
             # display selected screen if command line option present
             if simpleDisplay:
-                showSimplifiedScreen(summary)
+                showSimplifiedScreen(firstTime, summary)
             else:
-                showDefaultScreen(summary) 
+                showDefaultScreen(firstTime, summary) 
+
+            firstTime = False
 
             time.sleep(int(screenRefreshDelay)) # Number of seconds to wait, aprox.
 
