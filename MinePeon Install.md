@@ -1,9 +1,8 @@
-
 This is a quick guide to installing the cgminerLCDStats.py script on MinePeon. Note that I'm new to MinePeon as well as Arch linux for ARM. I welcome any input on this guide.
 
 I started with a fresh install of the current version of MinePeon, v0.2.2. I took the usual steps to verify cgminer was working correctly, and that my Pi would come up on the same internal I.P. address each time.
 
-After first boot up, I logged in via ssh from my main machine. I find it way easier to interact with the Pi command line over ssh, rather than logging into the Pi itself. When entering the following commands, it's easiest to copy and past them into the terminal window. Wait for each step to complete and watch for errors. 
+To begin the installation, I logged in to the Pi via ssh from my main machine. I find it way easier to interact with the Pi command line over ssh, rather than logging into the Pi itself. When entering the following commands, it's easiest to copy and past them into the terminal window. Wait for each step to complete and watch for errors. 
 
 Ok, let's get started. Log on to your Pi with this command:
 ssh minepeon@YOURIP    - example: ssh minepeon@192.168.1.111
