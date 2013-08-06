@@ -14,24 +14,24 @@ Get the "git" utility for downloading packages:
 `sudo pacman -S git`
 
 Make sure we have all the latest MinePeon packages:  
-`cd /opt/minepeon/`
-`git pull`
-`cd /opt/minepeon/http/`
-`git pull`
+`cd /opt/minepeon/`  
+`git pull`  
+`cd /opt/minepeon/http/`  
+`git pull`  
 
 Optional: Verify Python2 is already installed (it should be) - current version is Python 2.7.5:  
 `python2 -V`
 
 Install pyUSB library:  
-`cd ~`
-`git clone https://github.com/walac/pyusb.git`
-`cd pyusb`
-`sudo python2 setup.py install`
+`cd ~`  
+`git clone https://github.com/walac/pyusb.git`  
+`cd pyusb`  
+`sudo python2 setup.py install`  
 
 Install the cgminerLCDStats.py script and required modules:  
-`cd ~`
-`git clone https://github.com/cardcomm/cgminerLCDStats.git`
-`cd cgminerLCDStats`
+`cd ~`  
+`git clone https://github.com/cardcomm/cgminerLCDStats.git`  
+`cd cgminerLCDStats`  
 
 Ok, that's it. We should be ready to go. Make sure the LCD display is connected, and let's start the script. You can start it with the default options using the following command:  
 `sudo python2 cgminerLCDStats.py`
