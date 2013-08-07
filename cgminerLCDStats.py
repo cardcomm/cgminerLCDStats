@@ -256,7 +256,7 @@ def showDefaultScreen(firstTime, summary):
     
     # build the display strings
     line1String = str(poolURL) + "\t" + theTime
-    line2String = "Uptime: \t" + upTime
+    line2String = "Uptime:  " + upTime
     line3String = "Avg:" + avgMhs + "h/s" + "  B:" + foundBlocks
     #line3String = "Avg:" + avgMhs + "\tB:" + foundBlocks
     line4String = difficultyAccepted + "   " + difficultyRejected
@@ -276,8 +276,8 @@ def showDefaultScreen(firstTime, summary):
         display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
 
     # write all lines
-    display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.YELLOW)
-    display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)    
+    display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT), TextColours.YELLOW)
+    display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)    
     display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.GREEN)
     display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.GREEN)
     display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.GREEN)
