@@ -31,7 +31,7 @@ Update 8/1/2013: Fixed bugs identified by Kano related to using too small a buff
 Also updated default screen display to use the proper fields and a better layout, also per Kano
                         
 
- For more specifics about the display this code supports, see:  
+ For more specifics about the "LCD sys info" display this code supports, see:  
   http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info  
   https://github.com/dangardner/pylcdsysinfo
   
