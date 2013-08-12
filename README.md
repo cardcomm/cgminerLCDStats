@@ -1,7 +1,7 @@
 cgminerLCDStats
 ===============
 
-Simple script to get data from cgminer API and display it on the AIDA64 LCD Smartie display
+Simple script to get data from cgminer API and display it on the "LCD sys info" display
 
 Copyright 2013 Cardinal Communications
 If you feel this code is useful, please consider a donation to:  
