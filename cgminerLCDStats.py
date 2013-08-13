@@ -21,13 +21,11 @@
 
 
 import math
-import sys
-import time
-import datetime
-import json
 from pylcdsysinfo import BackgroundColours, TextColours, TextAlignment, TextLines, LCDSysInfo
 import CgminerRPCClient
 from optparse import OptionParser
+import time
+
 
 #
 # Config section
@@ -105,7 +103,6 @@ def getMinerPoolStatusURL():
 #  Throws exception if summary is emmpty
 # 
 def getMinerSummary():
-    output=""
     result = CgminerRPCClient.command('summary', host, port)
     if result:
         #print json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
@@ -122,7 +119,6 @@ def getMinerSummary():
 #  Throws exception if notify is empty
 # 
 def getMinerNotifications():
-    output=""
     result = CgminerRPCClient.command('notify', host, port)
     if result:
         #print json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
@@ -139,7 +135,6 @@ def getMinerNotifications():
 #  Throws exception if notify is empty
 # 
 def getMinerStats():
-    output=""
     result = CgminerRPCClient.command('stats', host, port)
     if result:
         #print json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
@@ -245,9 +240,10 @@ def convertSize(size):
 #  NOTE: screen design courtesy of "Kano". Thanks man!
 #
 def showDefaultScreen(firstTime, summary):
-    
+
     # extract just the data we want from the API result and
     #  build up display strings for each using the data
+        
     avg = float(summary['SUMMARY'][0]['MHS av'])
     avgMhs = convertSize(avg*1000000.0)
     foundBlocks = str(int(summary['SUMMARY'][0]['Found Blocks']))    
@@ -256,11 +252,24 @@ def showDefaultScreen(firstTime, summary):
     hardwareErrors = "HW:" + str(int(summary['SUMMARY'][0]['Hardware Errors']))
     bestShare = "S:" + convertSize(int(summary['SUMMARY'][0]['Best Share']))
     workUtility = "WU:" + str(summary['SUMMARY'][0]['Work Utility']) + "/m"
+   
+    # get current time, and format it per user selection
+    theTime = ""
+    commonPrefix = ['stratum.', 'www.', '.com']    
+    time.ctime() # formatted like this: 'Mon Oct 18 13:35:29 2010'
+    if timeDisplayFormat == '12':
+        theTime = time.strftime("%I:%M%p")  # 12 hour display
+    else:    
+        theTime = time.strftime("%H:%M:%S")  # default to 24 hour display
 
-    theTime = str(datetime.datetime.now()).split(' ')[1].split('.')[0]
+    # strip common prefixes and suffixes off of the pool URL (to save display space)   
+    p = str(poolURL)
+    for i in commonPrefix:
+        p = p.replace(i, '', 1).rstrip()
+    shortPoolURL = p    
     
     # build the display strings
-    line1String = str(poolURL) + "\t" + theTime
+    line1String = shortPoolURL + "\t" + theTime
     line2String = "Uptime:  " + upTime
     line3String = "Avg:" + avgMhs + "h/s" + "  B:" + foundBlocks
     #line3String = "Avg:" + avgMhs + "\tB:" + foundBlocks
@@ -281,8 +290,8 @@ def showDefaultScreen(firstTime, summary):
         display.clear_lines(TextLines.ALL, BackgroundColours.BLACK)
 
     # write all lines
-    display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT), TextColours.YELLOW)
-    display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT), TextColours.LIGHT_BLUE)    
+    display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.YELLOW)
+    display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)    
     display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.GREEN)
     display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.GREEN)
     display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.GREEN)
@@ -311,8 +320,9 @@ if __name__ == "__main__":
 
         # setup command line options and help
         parser.add_option("-s", "--simple", action="store_true", dest="simpleDisplay", default=False, help="Show simple display layout instead of default")
-        parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=30, help="REFRESHDELAY = Time delay between screen/API refresh") 
+        parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=3, help="REFRESHDELAY = Time delay between screen/API refresh") 
         parser.add_option("-i", "--host", type="str", dest="host", default=host, help="I.P. Address of cgminer API host")
+        parser.add_option("-c", "--clock", type="str", dest="timeDisplayFormat", default='12', help="Clock Display 12 hr / 24 hr")
 
         # parse the arguments - stick the results in the simpleDisplay and screenRefreshDelay variables
         (options, args) = parser.parse_args()    
@@ -320,6 +330,7 @@ if __name__ == "__main__":
         screenRefreshDelay = int(options.refreshDelay)
         host = options.host
         errorRefreshDelay = screenRefreshDelay
+        timeDisplayFormat = options.timeDisplayFormat
         
         try:
             notification = getMinerNotifications()
