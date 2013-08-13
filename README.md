@@ -16,6 +16,7 @@ Options:
   `-s, --simple          Show simple display layout instead of default`  
   `-d REFRESHDELAY, --refresh-delay=REFRESHDELAY  where  REFRESHDELAY = Time delay between screen/API refresh`                          
   `-i HOST, --host=HOST  I.P. Address of cgminer API host`  
+  `-c TIMEDISPLAYFORMAT, --clock=TIMEDISPLAYFORMAT  -c12 or -c24 Clock Display 12hr / 24hr`  
                         
 Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
       He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
