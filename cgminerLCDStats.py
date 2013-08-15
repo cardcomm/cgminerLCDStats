@@ -251,7 +251,7 @@ def showDefaultScreen(firstTime, summary):
     if 'Pool Rejected%' in summary['SUMMARY'][0]:
         rej = str(summary['SUMMARY'][0]['Pool Rejected%'])
         if (rej == '0'):
-            rejp = str(rej) + "%"
+            rejp = rej + "%"
         else:
             rejp = rej.split('.')[0] + "." + rej.split('.')[1][:2] + "%"
     else:
@@ -260,7 +260,7 @@ def showDefaultScreen(firstTime, summary):
     if 'Device Hardware%' in summary['SUMMARY'][0]:
         hw = str(summary['SUMMARY'][0]['Device Hardware%'])
         if (hw == '0'):
-            hwp = str(hw) + "%"
+            hwp = hw + "%"
         else:
             hwp = hw.split('.')[0] + "." + hw.split('.')[1][:2] + "%"
     else:
