@@ -248,8 +248,24 @@ def showDefaultScreen(firstTime, summary):
     avgMhs = convertSize(avg*1000000.0)
     foundBlocks = str(int(summary['SUMMARY'][0]['Found Blocks']))    
     difficultyAccepted = "A:" + str(int(summary['SUMMARY'][0]['Difficulty Accepted']))
-    difficultyRejected = "R:" + str(int(summary['SUMMARY'][0]['Difficulty Rejected']))
-    hardwareErrors = "HW:" + str(int(summary['SUMMARY'][0]['Hardware Errors']))
+    if 'Pool Rejected%' in summary['SUMMARY'][0]:
+        rej = str(summary['SUMMARY'][0]['Pool Rejected%'])
+        if (rej == '0'):
+            rejp = rej + "%"
+        else:
+            rejp = rej.split('.')[0] + "." + rej.split('.')[1][:2] + "%"
+    else:
+        rejp = str(int(summary['SUMMARY'][0]['Difficulty Rejected']))
+    reject = "R:" + rejp
+    if 'Device Hardware%' in summary['SUMMARY'][0]:
+        hw = str(summary['SUMMARY'][0]['Device Hardware%'])
+        if (hw == '0'):
+            hwp = hw + "%"
+        else:
+            hwp = hw.split('.')[0] + "." + hw.split('.')[1][:2] + "%"
+    else:
+        hwp = str(int(summary['SUMMARY'][0]['Hardware Errors']))
+    hardware = "HW:" + hwp
     bestShare = "S:" + convertSize(int(summary['SUMMARY'][0]['Best Share']))
     workUtility = "WU:" + str(summary['SUMMARY'][0]['Work Utility']) + "/m"
    
@@ -273,8 +289,8 @@ def showDefaultScreen(firstTime, summary):
     line2String = "Uptime:  " + upTime
     line3String = "Avg:" + avgMhs + "h/s" + "  B:" + foundBlocks
     #line3String = "Avg:" + avgMhs + "\tB:" + foundBlocks
-    line4String = difficultyAccepted + "   " + difficultyRejected
-    line5String = hardwareErrors + "   " + bestShare
+    line4String = difficultyAccepted + "  " + bestShare
+    line5String = reject + "  " + hardware
     line6String = workUtility
         
     # set up to write to the LCD screen
