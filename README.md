@@ -1,7 +1,7 @@
 cgminerLCDStats
 ===============
 
-Simple script to get data from cgminer API and display it on the "LCD sys info" display
+Simple script to get data from cgminer API and display it on the "LCD sys info" display. See links below for where you can purchase the display used for this project.
 
 Copyright 2013 Cardinal Communications
 If you feel this code is useful, please consider a donation to:  
