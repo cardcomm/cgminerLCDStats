@@ -25,6 +25,7 @@ from pylcdsysinfo import BackgroundColours, TextColours, TextAlignment, TextLine
 import CgminerRPCClient
 from optparse import OptionParser
 import time
+import json
 
 
 #
@@ -71,11 +72,10 @@ def getDeviceWellStatus(notification):
 
 #
 # call cgminer "pools" API to get status
-# returns: URL of connected pool if found. 
-#   Thows exception if no pool found
+# returns: URL of connected pool if found. Empty string if no pool URL found (impossible case?)
 #
 def getMinerPoolStatusURL():
-    
+
     poolURL = ""
     allPools = []    
     
@@ -84,17 +84,18 @@ def getMinerPoolStatusURL():
     if result:
         for items in result: # iterate over entire result to find POOLS collection
             if items == "POOLS":
-                for i in result[items]: # found POOLS collection
-                    allPools.append(i) # build list of all pools
-
+                for i in result[items]: # found POOLS collection - build list of all pools
+                    #print json.dumps(i, sort_keys=True, indent=4, separators=(',', ': ')) 
+                    allPools.append(i) 
+                    
     # iterate over list of pools till we find the active one, then get the URL
     for thisPool in allPools:
-        if thisPool['Priority'] == 0:
-            poolURL = thisPool['URL'].split('/')[2].split(':')[0]
- 
+        if thisPool['Stratum Active'] == True and thisPool['Status'] == 'Alive':
+            poolURL = thisPool['Stratum URL']
+        
     return poolURL
-    
-# END getMinerPoolStatus()
+     
+# END getMinerPoolStatusURL()
 
 
 #
@@ -271,7 +272,7 @@ def showDefaultScreen(firstTime, summary):
    
     # get current time, and format it per user selection
     theTime = ""
-    commonPrefix = ['stratum.', 'www.', '.com']    
+    commonPrefix = ['stratum.', 'www.', '.com', 'mining.']    
     time.ctime() # formatted like this: 'Mon Oct 18 13:35:29 2010'
     if timeDisplayFormat == '12':
         theTime = time.strftime("%I:%M%p")  # 12 hour display
