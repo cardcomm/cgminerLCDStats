@@ -7,13 +7,13 @@ To begin the installation, I logged in to the Pi via ssh from my main machine. I
 Ok, let's get started. Log on to your Pi with this command:  
 ssh minepeon@YOURIP    - example: ssh minepeon@192.168.1.111
 
-Make sure the OS is up to date:  
+Make sure the OS is up to date (Optional step - skip this is you want too, or are already on a recent version):  
 `sudo pacman -Syu`
 
 Get the "git" utility for downloading packages:  
 `sudo pacman -S git`
 
-Make sure we have all the latest MinePeon packages:  
+Make sure we have all the latest MinePeon packages (Optional step - skip this is you want too, or are already on a recent version):  
 `cd /opt/minepeon/`  
 `git pull`  
 `cd /opt/minepeon/http/`  
