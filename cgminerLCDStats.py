@@ -271,15 +271,15 @@ def showDefaultScreen(firstTime, summary):
     workUtility = "WU:" + str(summary['SUMMARY'][0]['Work Utility']) + "/m"
    
     # get current time, and format it per user selection
-    theTime = ""
-    commonPrefix = ['stratum.', 'www.', '.com', 'mining.']    
+    theTime = ""   
     time.ctime() # formatted like this: 'Mon Oct 18 13:35:29 2010'
     if timeDisplayFormat == '12':
         theTime = time.strftime("%I:%M%p")  # 12 hour display
     else:    
         theTime = time.strftime("%H:%M:%S")  # default to 24 hour display
 
-    # strip common prefixes and suffixes off of the pool URL (to save display space)   
+    # strip common prefixes and suffixes off of the pool URL (to save display space)
+    commonPrefix = ['stratum+tcp://', 'stratum.', 'www.', '.com', 'mining.']  
     p = str(poolURL)
     for i in commonPrefix:
         p = p.replace(i, '', 1).rstrip()
