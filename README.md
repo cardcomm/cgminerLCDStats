@@ -3,7 +3,6 @@ cgminerLCDStats
 
 Simple script to get data from cgminer API and display it on the "LCD sys info" display. See links below for where you can purchase the display used for this project.
 
-Copyright 2013 Cardinal Communications
 If you feel this code is useful, please consider a donation to:  
   BTC address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed
 
@@ -18,27 +17,16 @@ Options:
   `-i HOST, --host=HOST  I.P. Address of cgminer API host`  
   `-c TIMEDISPLAYFORMAT, --clock=TIMEDISPLAYFORMAT  Options 12 or 24 - Clock Display 12hr / 24hr`  
                         
-Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
-      He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
-      https://bitcointalk.org/index.php?action=profile;u=36044
-      
-Update 8/4/2013: Enhanced error display / fix pool URL display
-Added friendly error messages throughout. Fixed error handling to
-detect "no hardware" condition.
-
-Fixed bug in code that retrieved current mining pool URL.
-                        
-Update 8/1/2013: Fixed bugs identified by Kano related to using too small a buffer size for the API data. 
-Also updated default screen display to use the proper fields and a better layout, also per Kano
-                        
-
  For more specifics about the "LCD sys info" display this code supports, see:  
   http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info  
   https://github.com/dangardner/pylcdsysinfo
   
- You can purchase one here:  
+ Where to buy the LCD Display Unit:  
   http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&hash=item1c2c6fc700
 
+Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
+      He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
+      https://bitcointalk.org/index.php?action=profile;u=36044
 
 Copyright (c) 2013 Cardinal Commmunications
 
