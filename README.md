@@ -17,12 +17,12 @@ Options:
   `-i HOST, --host=HOST  I.P. Address of cgminer API host`  
   `-c TIMEDISPLAYFORMAT, --clock=TIMEDISPLAYFORMAT  Options 12 or 24 - Clock Display 12hr / 24hr`  
                         
- For more specifics about the "LCD sys info" display this code supports, see:  
+ **Where to buy the LCD Display Unit: ** 
+  http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&hash=item1c2c6fc700
+
+ **For more specifics about the "LCD sys info" display this code supports, see:  ** 
   http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info  
   https://github.com/dangardner/pylcdsysinfo
-  
- Where to buy the LCD Display Unit:  
-  http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&hash=item1c2c6fc700
 
 Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
       He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
