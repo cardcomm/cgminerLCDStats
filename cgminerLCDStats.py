@@ -146,11 +146,8 @@ def getMinerStats():
  
 # END getMinerNotifications()
 
-
-
-
 #
-# call cgminer "STATS" API to get uptime TODO Deprecated?
+# call cgminer "STATS" API to get uptime
 #
 def getMinerPoolUptime(stats):
         output = ""
@@ -160,8 +157,6 @@ def getMinerPoolUptime(stats):
         return output
         
 # END getMinerPoolUptime()
-
-
 
 #
 # Display simplified status info screen
@@ -279,12 +274,11 @@ def showDefaultScreen(firstTime, summary):
         theTime = time.strftime("%H:%M:%S")  # default to 24 hour display
 
     # strip common prefixes and suffixes off of the pool URL (to save display space)
-    commonPrefix = ['stratum+tcp://', 'stratum.', 'www.', '.com', 'mining.']  
-    p = str(poolURL)
-    for i in commonPrefix:
-        p = p.replace(i, '', 1).rstrip()
-    shortPoolURL = p    
-    
+    commonStringPattern = ['stratum+tcp://', 'stratum.', 'www.', '.com', 'mining.', ':3333', ':3334']  
+    shortPoolURL = str(poolURL)
+    for i in commonStringPattern:
+        shortPoolURL = shortPoolURL.replace(i, '', 1).rstrip()   
+      
     # build the display strings
     line1String = shortPoolURL + "\t" + theTime
     line2String = "Uptime:  " + upTime
