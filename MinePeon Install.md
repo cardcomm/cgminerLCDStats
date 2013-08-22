@@ -1,3 +1,11 @@
+
+NOTE: This Guide Is Deprecated. As of version 0.2.3a MinePeon has built in support for cgminerLCDStats
+------------------------------------------------------------------------------------------------------
+
+https://bitcointalk.org/index.php?topic=137934.msg2969124#msg2969124  
+
+This guide does still apply for those using versions earlier than MinePeon-0.2.3a.
+
 This is a quick guide to installing the cgminerLCDStats.py script on MinePeon. Note that I'm new to MinePeon as well as Arch linux for ARM. I welcome any input on this guide.
 
 I started with a fresh install of the current version of MinePeon, v0.2.2. I took the usual steps to verify cgminer was working correctly, and that my Pi would come up on the same internal I.P. address each time.
