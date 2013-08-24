@@ -283,6 +283,11 @@ def showDefaultScreen(firstTime, summary):
     line1String = shortPoolURL + "\t" + theTime
     line2String = "Uptime:  " + upTime
     line3String = "Avg:" + avgMhs + "h/s" + "  B:" + foundBlocks
+    if int(foundBlocks) > 0:
+        line3Colour = TextColours.RED
+    else:
+        line3Colour = TextColours.GREEN
+
     #line3String = "Avg:" + avgMhs + "\tB:" + foundBlocks
     line4String = difficultyAccepted + "  " + bestShare
     line5String = reject + "  " + hardware
@@ -303,7 +308,7 @@ def showDefaultScreen(firstTime, summary):
     # write all lines
     display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.YELLOW)
     display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)    
-    display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.GREEN)
+    display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), line3Colour)
     display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.GREEN)
     display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.GREEN)
     display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.GREEN)
