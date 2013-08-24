@@ -333,6 +333,7 @@ if __name__ == "__main__":
         parser.add_option("-s", "--simple", action="store_true", dest="simpleDisplay", default=False, help="Show simple display layout instead of default")
         parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=3, help="REFRESHDELAY = Time delay between screen/API refresh") 
         parser.add_option("-i", "--host", type="str", dest="host", default=host, help="I.P. Address of cgminer API host")
+        parser.add_option("-p", "--port", type="int", dest="port", default=port, help="Port of cgminer API") 
         parser.add_option("-c", "--clock", type="str", dest="timeDisplayFormat", default='12', help="Clock Display 12 hr / 24 hr")
 
         # parse the arguments - stick the results in the simpleDisplay and screenRefreshDelay variables
@@ -340,6 +341,7 @@ if __name__ == "__main__":
         simpleDisplay = options.simpleDisplay
         screenRefreshDelay = int(options.refreshDelay)
         host = options.host
+        port = options.port
         errorRefreshDelay = screenRefreshDelay
         timeDisplayFormat = options.timeDisplayFormat
         
