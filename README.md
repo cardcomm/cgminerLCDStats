@@ -15,6 +15,7 @@ Options:
   `-s, --simple          Show simple display layout instead of default`  
   `-d REFRESHDELAY, --refresh-delay=REFRESHDELAY  where  REFRESHDELAY = Time delay between screen/API refresh`                          
   `-i HOST, --host=HOST  I.P. Address of cgminer API host`  
+  `-p PORT, --port=PORT  Port of cgminer API`  
   `-c TIMEDISPLAYFORMAT, --clock=TIMEDISPLAYFORMAT  Options 12 or 24 - Clock Display 12hr / 24hr`  
                         
  Where to buy the LCD Display Unit:  
