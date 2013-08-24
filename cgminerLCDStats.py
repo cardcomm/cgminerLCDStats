@@ -77,22 +77,28 @@ def getDeviceWellStatus(notification):
 def getMinerPoolStatusURL():
 
     poolURL = ""
-    allPools = []    
+    firstPool = []
+    minprio = 9999
     
     result = CgminerRPCClient.command('pools', host, port)   
     
     if result:
         for items in result: # iterate over entire result to find POOLS collection
             if items == "POOLS":
-                for i in result[items]: # found POOLS collection - build list of all pools
+                for i in result[items]: # found POOLS collection - remember best Alive
                     #print json.dumps(i, sort_keys=True, indent=4, separators=(',', ': ')) 
-                    allPools.append(i) 
-                    
-    # iterate over list of pools till we find the active one, then get the URL
-    for thisPool in allPools:
-        if thisPool['Stratum Active'] == True and thisPool['Status'] == 'Alive':
-            poolURL = thisPool['Stratum URL']
-        
+                    if i['Status'] == 'Alive':
+                        prio = int(i['Priority'])
+                        if prio < minprio:
+                            minprio = prio
+                            firstPool = i
+
+        if minprio < 9999:
+            if firstPool['Stratum Active'] == True:
+                poolURL = firstPool['Stratum URL']
+            else:
+                poolURL = firstPool['URL']
+
     return poolURL
      
 # END getMinerPoolStatusURL()
@@ -274,7 +280,7 @@ def showDefaultScreen(firstTime, summary):
         theTime = time.strftime("%H:%M:%S")  # default to 24 hour display
 
     # strip common prefixes and suffixes off of the pool URL (to save display space)
-    commonStringPattern = ['stratum+tcp://', 'stratum.', 'www.', '.com', 'mining.', ':3333', ':3334']  
+    commonStringPattern = ['http://', 'stratum+tcp://', 'stratum.', 'www.', '.com', 'mining.', ':3333', ':3334', ':8330']  
     shortPoolURL = str(poolURL)
     for i in commonStringPattern:
         shortPoolURL = shortPoolURL.replace(i, '', 1).rstrip()   
@@ -283,6 +289,11 @@ def showDefaultScreen(firstTime, summary):
     line1String = shortPoolURL + "\t" + theTime
     line2String = "Uptime:  " + upTime
     line3String = "Avg:" + avgMhs + "h/s" + "  B:" + foundBlocks
+    if int(foundBlocks) > 0:
+        line3Colour = TextColours.RED
+    else:
+        line3Colour = TextColours.GREEN
+
     #line3String = "Avg:" + avgMhs + "\tB:" + foundBlocks
     line4String = difficultyAccepted + "  " + bestShare
     line5String = reject + "  " + hardware
@@ -303,7 +314,7 @@ def showDefaultScreen(firstTime, summary):
     # write all lines
     display.display_text_on_line(1, line1String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.YELLOW)
     display.display_text_on_line(2, line2String, True, (TextAlignment.LEFT, TextAlignment.RIGHT), TextColours.LIGHT_BLUE)    
-    display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), TextColours.GREEN)
+    display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), line3Colour)
     display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.GREEN)
     display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.GREEN)
     display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.GREEN)
@@ -333,6 +344,7 @@ if __name__ == "__main__":
         parser.add_option("-s", "--simple", action="store_true", dest="simpleDisplay", default=False, help="Show simple display layout instead of default")
         parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=3, help="REFRESHDELAY = Time delay between screen/API refresh") 
         parser.add_option("-i", "--host", type="str", dest="host", default=host, help="I.P. Address of cgminer API host")
+        parser.add_option("-p", "--port", type="int", dest="port", default=port, help="Port of cgminer API") 
         parser.add_option("-c", "--clock", type="str", dest="timeDisplayFormat", default='12', help="Clock Display 12 hr / 24 hr")
 
         # parse the arguments - stick the results in the simpleDisplay and screenRefreshDelay variables
@@ -340,6 +352,7 @@ if __name__ == "__main__":
         simpleDisplay = options.simpleDisplay
         screenRefreshDelay = int(options.refreshDelay)
         host = options.host
+        port = options.port
         errorRefreshDelay = screenRefreshDelay
         timeDisplayFormat = options.timeDisplayFormat
         
