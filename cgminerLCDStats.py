@@ -77,22 +77,28 @@ def getDeviceWellStatus(notification):
 def getMinerPoolStatusURL():
 
     poolURL = ""
-    allPools = []    
+    firstPool = []
+    minprio = 9999
     
     result = CgminerRPCClient.command('pools', host, port)   
     
     if result:
         for items in result: # iterate over entire result to find POOLS collection
             if items == "POOLS":
-                for i in result[items]: # found POOLS collection - build list of all pools
+                for i in result[items]: # found POOLS collection - remember best Alive
                     #print json.dumps(i, sort_keys=True, indent=4, separators=(',', ': ')) 
-                    allPools.append(i) 
-                    
-    # iterate over list of pools till we find the active one, then get the URL
-    for thisPool in allPools:
-        if thisPool['Stratum Active'] == True and thisPool['Status'] == 'Alive':
-            poolURL = thisPool['Stratum URL']
-        
+                    if i['Status'] == 'Alive':
+                        prio = int(i['Priority'])
+                        if prio < minprio:
+                            minprio = prio
+                            firstPool = i
+
+        if minprio < 9999:
+            if firstPool['Stratum Active'] == True:
+                poolURL = firstPool['Stratum URL']
+            else:
+                poolURL = firstPool['URL']
+
     return poolURL
      
 # END getMinerPoolStatusURL()
@@ -274,7 +280,7 @@ def showDefaultScreen(firstTime, summary):
         theTime = time.strftime("%H:%M:%S")  # default to 24 hour display
 
     # strip common prefixes and suffixes off of the pool URL (to save display space)
-    commonStringPattern = ['stratum+tcp://', 'stratum.', 'www.', '.com', 'mining.', ':3333', ':3334']  
+    commonStringPattern = ['http://', 'stratum+tcp://', 'stratum.', 'www.', '.com', 'mining.', ':3333', ':3334', ':8330']  
     shortPoolURL = str(poolURL)
     for i in commonStringPattern:
         shortPoolURL = shortPoolURL.replace(i, '', 1).rstrip()   
