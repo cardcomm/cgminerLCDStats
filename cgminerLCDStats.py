@@ -2,6 +2,8 @@
 # Simple script to read information from the cgminer API and display it on
 #  the "LCD sys info" display
 #
+#  This version has been updated to display MtGox "Last" ticker information.
+#
 # Copyright 2013 Cardinal Communications
 # If you feel this code is useful, please consider a donation to:
 #  BTC address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed
