@@ -3,7 +3,7 @@
 ## The class supports GET requests for API calls that don't require authentication
 ##  as well as PUT requests for those that do.
 #
-## Much of this code was based on numerous code samples from various sources
+## This code was based on numerous code samples from various sources
 #
 
 import time,hmac,base64,hashlib,urllib,urllib2,json, gzip, io
