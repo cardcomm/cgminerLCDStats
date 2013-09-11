@@ -2,6 +2,8 @@
 # Simple script to read information from the cgminer API and display it on
 #  the "LCD sys info" display
 #
+#  This version has been updated to display MtGox "Last" ticker information.
+#
 # Copyright 2013 Cardinal Communications
 # If you feel this code is useful, please consider a donation to:
 #  BTC address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed
@@ -19,31 +21,19 @@
 #
 # NOTE: I am NOT associated in any way with ColdTears Electronics. All I can promise is that it works well for what I use it for.
 
-
 import math
 from pylcdsysinfo import BackgroundColours, TextColours, TextAlignment, TextLines, LCDSysInfo
-import CgminerRPCClient
+from CgminerRPCClient import CgminerRPCClient
 from optparse import OptionParser
 import time
-import json
+import json     # used when debugging for json print formatting
+from mtgoxAPI import mtgoxAPI
+from TimedToggle import TimedToggle
 
 
 #
-# Config section
-#
-global host
-global port
-
-host = '127.0.0.1' # change if accessing cgminer instance on another box in local network
-# host = '192.168.1.111' 
-port = 4028     # default port - change if your is different
-
-screenRefreshDelay = 30 # number of seconds to wait before each screen refresh (aprox.) - value overridden by command line parm
-errorRefreshDelay = 30 # number of seconds to wait before each ERROR screen refresh (aprox.)
-simpleDisplay = False # value overridden by command line parm
-
-#
-# call cgminer "notify" API to check for device not well error
+# Check the cgminer API "notification" results for device not well error
+# parms: json "notification" response from cgminer API call
 # return: 'Well' if device error not detected
 # function throws exception if hardware error is found
 #
@@ -74,13 +64,13 @@ def getDeviceWellStatus(notification):
 # call cgminer "pools" API to get status
 # returns: URL of connected pool if found. Empty string if no pool URL found (impossible case?)
 #
-def getMinerPoolStatusURL():
+def getMinerPoolStatusURL(rpcClient):
 
     poolURL = ""
     firstPool = []
     minprio = 9999
     
-    result = CgminerRPCClient.command('pools', host, port)   
+    result = rpcClient.command('pools')   
     
     if result:
         for items in result: # iterate over entire result to find POOLS collection
@@ -107,10 +97,10 @@ def getMinerPoolStatusURL():
 #
 ## call cgminer "summary" API
 # returns: json "summary" call results
-#  Throws exception if summary is emmpty
+#  Throws exception if summary is empty
 # 
-def getMinerSummary():
-    result = CgminerRPCClient.command('summary', host, port)
+def getMinerSummary(rpcClient):
+    result = rpcClient.command('summary')
     if result:
         #print json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
         return result
@@ -125,8 +115,8 @@ def getMinerSummary():
 # returns: json "notify" call results
 #  Throws exception if notify is empty
 # 
-def getMinerNotifications():
-    result = CgminerRPCClient.command('notify', host, port)
+def getMinerNotifications(rpcClient):
+    result = rpcClient.command('notify')
     if result:
         #print json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
         return result
@@ -141,8 +131,8 @@ def getMinerNotifications():
 # returns: json "stats" call results
 #  Throws exception if notify is empty
 # 
-def getMinerStats():
-    result = CgminerRPCClient.command('stats', host, port)
+def getMinerStats(rpcClient):
+    result = rpcClient.command('stats')
     if result:
         #print json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))
         return result
@@ -154,6 +144,9 @@ def getMinerStats():
 
 #
 # call cgminer "STATS" API to get uptime
+# Using the "STATS" response from a cgminer API call, calculate and return uptime
+# parms: json "STATS" response from cgminer API call
+# returns: calculated cgminer instance uptime
 #
 def getMinerPoolUptime(stats):
         output = ""
@@ -196,8 +189,6 @@ def showSimplifiedScreen(firstTime, summary):
 
 #
 # Display error screen 
-# (do lazy error handling - code needs to be refactored to remove API calls 
-#   from display functions for better error handling display)
 #
 def displayErrorScreen(e):
       
@@ -217,6 +208,9 @@ def displayErrorScreen(e):
 # END displayErrorScreen()
 
 
+#
+## Convert large numbers to the equivalent KB, MB, GB, TB sizes.
+#
 def convertSize(size):
     try:
         size_name = ("k", "M", "G", "T", "P", "E", "Z", "Y")
@@ -229,19 +223,49 @@ def convertSize(size):
         else:
             return '0' 
         
-    # swallow any math exceptions and just return 0 M
+    # swallow any math exceptions and just return 0
     except Exception as e:
         # TODO conditional log real error
-        #print str(e)
         return '0'
 
 # END convertSize(size)
 
 #
+# call MtGox "ticker_fast" API to get the "last" price in USD
+# parms: desired socket timeout value for http request
+# returns: Current MtGox "Last" price in USD, or "Error" if error/timeout occurs
+#
+def getMtGoxPrice(mtgoxTimeout):
+        
+    gox = mtgoxAPI('', '', 'API-Caller', mtgoxTimeout) # it's ok to pass empty credentials, since we're calling public API
+    try:            
+        bid_price = gox.req('BTCUSD/money/ticker_fast', {}, True) 
+        if bid_price:
+            return bid_price['data']['last']['display']
+            #print json.dumps(bid_price, sort_keys=True, indent=4, separators=(',', ': '))
+        else:
+            return "$000.00" # should never hit this case
+    # swallow all exceptions here, since we don't want to fail the app just because we can't get MtGox data
+    except Exception as e:
+        print "MTGox API Call Error - %s" % e
+        return "Error  " # this string is displayed instead of the dollar amount if API errored
+    
+# END getMtGoxPrice():
+
+
+#
 # Display default status info screen (mimics cgminer text display where possible)
 #  NOTE: screen design courtesy of "Kano". Thanks man!
 #
-def showDefaultScreen(firstTime, summary):
+#  Parms:
+#    firstTime - boolean is this the first run?
+#    summary - json string with cgminer "summary" call results
+#    mtgoxLastPrice - float amount from last API call
+#    mtgoxDirectionCode - int should contain the icon number for up or down arrow (7 or 8)
+#    toggleSinceLast - boolean did the mtGox display toggle state change since last time called?
+#    mtgoxToggleState - if True, display the MtGox price ticker
+#
+def showDefaultScreen(firstTime, summary, mtgoxLastPrice, mtgoxDirectionCode, toggleSinceLast, mtgoxToggleState):
 
     # extract just the data we want from the API result and
     #  build up display strings for each using the data
@@ -277,9 +301,10 @@ def showDefaultScreen(firstTime, summary):
     if timeDisplayFormat == '12':
         theTime = time.strftime("%I:%M%p")  # 12 hour display
     else:    
-        theTime = time.strftime("%H:%M:%S")  # default to 24 hour display
+        theTime = time.strftime("%H:%M:%S")  # 24 hour display
 
-    # strip common prefixes and suffixes off of the pool URL (to save display space)
+    # strip common prefixes and suffixes off of the pool URL (to save display space) 
+    # TODO add code to remove all ":dddd" instead of adding port numbers to ignore
     commonStringPattern = ['http://', 'stratum+tcp://', 'stratum.', 'www.', '.com', 'mining.', ':3333', ':3334', ':8330']  
     shortPoolURL = str(poolURL)
     for i in commonStringPattern:
@@ -297,7 +322,11 @@ def showDefaultScreen(firstTime, summary):
     #line3String = "Avg:" + avgMhs + "\tB:" + foundBlocks
     line4String = difficultyAccepted + "  " + bestShare
     line5String = reject + "  " + hardware
-    line6String = workUtility
+    
+    if mtgoxToggleState: # if we have MtGox data, get ready to display it
+        line6String = "MtGox: " + mtgoxLastPrice 
+    else:
+        line6String = workUtility
         
     # set up to write to the LCD screen
     #
@@ -317,76 +346,131 @@ def showDefaultScreen(firstTime, summary):
     display.display_text_on_line(3, line3String, True, (TextAlignment.LEFT), line3Colour)
     display.display_text_on_line(4, line4String, True, (TextAlignment.LEFT), TextColours.GREEN)
     display.display_text_on_line(5, line5String, True, (TextAlignment.LEFT), TextColours.GREEN)
-    display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.GREEN)
     
+    # check to see if the mtgoxDisplay just toggled, if so, display black text to remove traces of previous icon
+    if toggleSinceLast == True:
+        display.display_text_anywhere(0, 197, '       ', TextColours.BLACK)
     
+    if mtgoxToggleState == True:
+        display.display_icon(41, mtgoxDirectionCode) # directionCode should contain the icon number for up or down arrow
+        display.display_text_anywhere(95, 200, line6String, TextColours.GREEN)
+    else:
+        display.display_text_on_line(6, line6String, True, (TextAlignment.LEFT), TextColours.GREEN)
+       
 # END showDefaultScreen()
 
 
 #
 ## main body of application
 #
-
 if __name__ == "__main__":
     
     # print welcome message
     print "Welcome to cgminerLCDStats"
     print "Copyright 2013 Cardinal Communications"
+     
+    host = '127.0.0.1' # cgminer host IP - value overridden by command line parm
+    port = 4028     # default port - value overridden by command line parm
     
+    screenRefreshDelay = 3 # number of seconds to wait before each screen refresh (aprox.) - value overridden by command line parm
+    errorRefreshDelay = 30 # number of seconds to wait before each ERROR screen refresh (aprox.)
+    simpleDisplay = False # value overridden by command line parm TODO simple display function not needed?
+ 
+    # parse the command line parms, if any
+    usage = "usage: %prog [options] arg"  # set up parser object for use
+    parser = OptionParser(usage)
+
+    # setup command line options and help
+    parser.add_option("-s", "--simple", action="store_true", dest="simpleDisplay", default=False, help="Show simple display layout instead of default")
+    parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=screenRefreshDelay, help="REFRESHDELAY = Time delay between screen/API refresh") 
+    parser.add_option("-i", "--host", type="str", dest="host", default=host, help="I.P. Address of cgminer API host")
+    parser.add_option("-p", "--port", type="int", dest="port", default=port, help="Port of cgminer API") 
+    parser.add_option("-c", "--clock", type="str", dest="timeDisplayFormat", default='12', help="Clock Display 12 hr / 24 hr")
+    # MtGox related command line options
+    parser.add_option("--mtgoxDisplayOff", action="store_true", dest="mtgoxDisplayOff", default=False, help="If specified, MtGox ticker will not be displayed") 
+    parser.add_option("--mtgoxToggleRate", type="float", dest="mtgoxToggleRate", default=15, help="Rate to toggle display between WU: and MtGox in seconds")
+    parser.add_option("--mtgoxTimeout", type="float", dest="mtgoxTimeout", default=4, help="MtGox API socket timeout in seconds")
+
+    # parse the command line arguments and populate the variables
+    (options, args) = parser.parse_args()    
+    simpleDisplay = options.simpleDisplay
+    screenRefreshDelay = int(options.refreshDelay)
+    errorRefreshDelay = screenRefreshDelay
+    host = options.host
+    port = options.port
+    timeDisplayFormat = options.timeDisplayFormat
+    mtgoxTimeout = options.mtgoxTimeout
+    mtgoxDisplayOff = options.mtgoxDisplayOff
+    mtgoxToggleRate = options.mtgoxToggleRate
+    timedToggle = TimedToggle(mtgoxToggleRate) # create timed toggle instance that swaps state every X seconds
+    
+    # init other misc. variables        
     firstTime = True
+    mtgoxLastPrice = str("$000.00")
+    mtgoxPreviousPrice = str("$000.00")
+    mtgoxToggleState = True
+    # numbers are icon numbers on LCD device: 
+    mtgoxUpCode = 8     # up arrow icon number
+    mtgoxDownCode = 7   # down arrow icon number
+    mtgoxDirectionCode = mtgoxUpCode 
     
+    # create instance of the CgminerRPCClient class
+    rpcClient = CgminerRPCClient(host, port)
+   
     while(True):
-        # parse the command line parms, if any
-        usage = "usage: %prog [options] arg"  # set up parser object for use
-        parser = OptionParser(usage)
-
-        # setup command line options and help
-        parser.add_option("-s", "--simple", action="store_true", dest="simpleDisplay", default=False, help="Show simple display layout instead of default")
-        parser.add_option("-d", "--refresh-delay", type="int", dest="refreshDelay", default=3, help="REFRESHDELAY = Time delay between screen/API refresh") 
-        parser.add_option("-i", "--host", type="str", dest="host", default=host, help="I.P. Address of cgminer API host")
-        parser.add_option("-p", "--port", type="int", dest="port", default=port, help="Port of cgminer API") 
-        parser.add_option("-c", "--clock", type="str", dest="timeDisplayFormat", default='12', help="Clock Display 12 hr / 24 hr")
-
-        # parse the arguments - stick the results in the simpleDisplay and screenRefreshDelay variables
-        (options, args) = parser.parse_args()    
-        simpleDisplay = options.simpleDisplay
-        screenRefreshDelay = int(options.refreshDelay)
-        host = options.host
-        port = options.port
-        errorRefreshDelay = screenRefreshDelay
-        timeDisplayFormat = options.timeDisplayFormat
         
         try:
-            notification = getMinerNotifications()
+            notification = getMinerNotifications(rpcClient)
 
-            summary = getMinerSummary()
+            summary = getMinerSummary(rpcClient)
 
             avg = int(summary['SUMMARY'][0]['MHS av'])
 
             wellStatus = getDeviceWellStatus(notification)
 
-            poolURL = getMinerPoolStatusURL()
+            poolURL = getMinerPoolStatusURL(rpcClient)
 
-            stats = getMinerStats()
+            stats = getMinerStats(rpcClient)
 
             upTime = getMinerPoolUptime(stats)
-
+            
+            if not mtgoxDisplayOff: # check to see if user has turned of ticker display
+                # if they didn't, check to see if it's time to swap to MtGox display, if so, do it.
+                mtgoxToggleState = timedToggle.getToggleStatus()
+                # mtgoxToggleState = True  #TODO TEST USE to force mtGox display - remove
+                if (mtgoxToggleState == True):
+                    mtgoxPreviousPrice = mtgoxLastPrice
+                    mtgoxLastPrice = str(getMtGoxPrice(mtgoxTimeout))   # Call MtGox API to get "Last Price" in USD
+                    
+                    if mtgoxPreviousPrice == mtgoxLastPrice: # check direction of price change based on previous price
+                        pass                                    # no price change, so keep the previous direction code state
+                    elif mtgoxPreviousPrice > mtgoxLastPrice: 
+                        mtgoxDirectionCode = mtgoxDownCode # price went down
+                    else:
+                        mtgoxDirectionCode = mtgoxUpCode # price went up
+                        
+                else:                           
+                    mtgoxLastPrice = "$000.00"  # zero out last price since we didn't call API 
+                                            
             # display selected screen if command line option present
             if simpleDisplay:
                 showSimplifiedScreen(firstTime, summary)
             else:
-                showDefaultScreen(firstTime, summary) 
+                showDefaultScreen(firstTime, summary, mtgoxLastPrice, mtgoxDirectionCode, timedToggle.getToggleSinceLast(), mtgoxToggleState) 
 
             firstTime = False
 
             time.sleep(int(screenRefreshDelay)) # Number of seconds to wait, aprox.
+                                                # TODO consider adjusting the delay if we had to wait for an mtgox call?
 
-
+        #
+        ## Main application exception handler. All exceptions that aren't specifically swallowed end up here.
+        #
         except Exception as e:
             print "Main Exception Handler: "
             print str(e)
             print
-            displayErrorScreen(str(e))
+            displayErrorScreen(str(e))   # something bad happened, better display the error screen
             time.sleep(errorRefreshDelay)
 
 
