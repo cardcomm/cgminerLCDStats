@@ -3,13 +3,13 @@ NOTE: This Guide Is Deprecated. As of version 0.2.3a MinePeon has built in suppo
 
 To update cgminerLCDStats to the latest version, use the following commands from the terminal window or VIA ssh
 
-systemctl stop cgminerLCDStats
+`systemctl stop cgminerLCDStats`
 
-cd /opt/minepeon/modules/
-sudo rm -r cgminerLCDStats
-git clone https://github.com/cardcomm/cgminerLCDStats.git
+`cd /opt/minepeon/modules/`
+`sudo rm -r cgminerLCDStats`
+`git clone https://github.com/cardcomm/cgminerLCDStats.git`
 
-systemctl start cgminerLCDStats
+`systemctl start cgminerLCDStats`
 
 That's it. You should now be running the latest version of the cgminerLCDStats code. I hopw it's useful to you, and please consider a donation if you use it regularly. Thanks.  
 
