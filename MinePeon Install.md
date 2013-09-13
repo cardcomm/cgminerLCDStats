@@ -1,5 +1,4 @@
-NOTE: This Guide Is Deprecated. As of version 0.2.3a MinePeon has built in support for cgminerLCDStats.   
-See Below for information on updating to the latest version of cgminerLCDStats on MinePeon-0.2.3  
+NOTE: This Guide Is Deprecated. As of version 0.2.3a MinePeon has built in support for cgminerLCDStats. See Below for information on updating to the latest version of cgminerLCDStats on MinePeon-0.2.3  
 -----------------------------------------------------------------------------------------------------
 systemctl stop cgminerLCDStats
 
