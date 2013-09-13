@@ -1,4 +1,21 @@
+
 NOTE: This Guide Is Deprecated. As of version 0.2.3a MinePeon has built in support for cgminerLCDStats
+See Below for information on updating to the latest version of cgminerLCDStats on MinePeon MinePeon-0.2.3a
+------------------------------------------------------------------------------------------------------
+systemctl stop cgminerLCDStats
+
+systemctl start cgminerLCDStats
+
+
+/opt/minepeon/modules/cgminerLCDStats
+
+cd /opt/minepeon/modules/
+sudo rm -r cgminerLCDStats
+git clone https://github.com/cardcomm/cgminerLCDStats.git
+
+
+
+Installation guide for versions of MinePeon PRIOR to MinePeon 0.2.3a:
 ------------------------------------------------------------------------------------------------------
 
 https://bitcointalk.org/index.php?topic=137934.msg2969124#msg2969124  
