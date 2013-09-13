@@ -1,4 +1,3 @@
-
 NOTE: This Guide Is Deprecated. As of version 0.2.3a MinePeon has built in support for cgminerLCDStats
 ------------------------------------------------------------------------------------------------------
 
@@ -48,10 +47,15 @@ If everything went well, you should now see your cgminer stats displayed on the 
 
 Note: By default, the display refreshes every 30 seconds. You can change this, and other behavior using the following command line options:
 
-Options:
-  -h, --help            show this help message and exit
-  -s, --simple          Show simple display layout instead of default
-  -d REFRESHDELAY, --refresh-delay=REFRESHDELAY
-                        REFRESHDELAY = Time delay between screen/API refresh
-  -i HOST, --host=HOST  I.P. Address of cgminer API host
-
+Options:  
+  `-h, --help            show this help message and exit`  
+  `-s, --simple          Show simple display layout instead of default`  
+  `-d REFRESHDELAY, --refresh-delay=REFRESHDELAY  where  REFRESHDELAY = Time delay between screen/API refresh`                          
+  `-i HOST, --host=HOST  I.P. Address of cgminer API host`  
+  `-p PORT, --port=PORT  Port of cgminer API`  
+  `-c TIMEDISPLAYFORMAT, --clock=TIMEDISPLAYFORMAT  Options 12 or 24 - Clock Display 12hr / 24hr`  
+  `--mtgoxDisplayOff     If specified, MtGox ticker will not be displayed`  
+  `--mtgoxToggleRate=MTGOXTOGGLERATE  Rate to toggle display between WU: and MtGox in seconds`  
+  `--mtgoxTimeout=MTGOXTIMEOUT  MtGox API socket timeout in seconds - `    
+                                  `default 3 seconds, increase if logging exsessivetime-outs`    
+  
