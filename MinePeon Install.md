@@ -1,4 +1,4 @@
-See Below for information on updating to the latest version of cgminerLCDStats on MinePeon-0.2.3  
+How to update to the latest version of cgminerLCDStats on MinePeon-0.2.3:   
 -----------------------------------------------------------------------------------------------------
 
 To update cgminerLCDStats to the latest version, use the following commands from the terminal window or VIA ssh
