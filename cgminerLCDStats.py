@@ -238,7 +238,7 @@ def convertSize(size):
 def getMtGoxPrice(mtgoxTimeout):
         
     gox = mtgoxAPI('', '', 'API-Caller', mtgoxTimeout) # it's ok to pass empty credentials, since we're calling public API
-    try:            
+    try:          
         bid_price = gox.req('BTCUSD/money/ticker_fast', {}, True) 
         if bid_price:
             return bid_price['data']['last']['display']
@@ -390,6 +390,7 @@ if __name__ == "__main__":
     parser.add_option("--mtgoxDisplayOff", action="store_true", dest="mtgoxDisplayOff", default=False, help="If specified, MtGox ticker will not be displayed") 
     parser.add_option("--mtgoxToggleRate", type="float", dest="mtgoxToggleRate", default=15, help="Rate to toggle display between WU: and MtGox in seconds")
     parser.add_option("--mtgoxTimeout", type="float", dest="mtgoxTimeout", default=4, help="MtGox API socket timeout in seconds")
+    parser.add_option("--mtgoxForce", dest="mtgoxForce", default=False, help="True/False Force MtGox ticker to always display")
 
     # parse the command line arguments and populate the variables
     (options, args) = parser.parse_args()    
@@ -403,6 +404,7 @@ if __name__ == "__main__":
     mtgoxDisplayOff = options.mtgoxDisplayOff
     mtgoxToggleRate = options.mtgoxToggleRate
     timedToggle = TimedToggle(mtgoxToggleRate) # create timed toggle instance that swaps state every X seconds
+    mtgoxForce = options.mtgoxForce
     
     # init other misc. variables        
     firstTime = True
@@ -435,8 +437,13 @@ if __name__ == "__main__":
             upTime = getMinerPoolUptime(stats)
             
             if not mtgoxDisplayOff: # check to see if user has turned of ticker display
+                
                 # if they didn't, check to see if it's time to swap to MtGox display, if so, do it.
-                mtgoxToggleState = timedToggle.getToggleStatus()
+                if mtgoxForce == True:      # did user select to force mtGox to always display?
+                    mtgoxToggleState = True # if so, force flag
+                elif mtgoxForce == False:
+                    mtgoxToggleState = timedToggle.getToggleStatus()
+                    
                 # mtgoxToggleState = True  #TODO TEST USE to force mtGox display - remove
                 if (mtgoxToggleState == True):
                     mtgoxPreviousPrice = mtgoxLastPrice
