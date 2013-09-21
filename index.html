@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>cgminerLCDStats by cardcomm</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">cgminerLCDStats</h1>
+        <p class="header">Simple script to get data from cgminer API and display it on the &quot;LCD sys info&quot; display. Also includes MtGox ticker.</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/cardcomm/cgminerLCDStats/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/cardcomm/cgminerLCDStats/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/cardcomm/cgminerLCDStats">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/cardcomm">cardcomm</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="cgminerlcdstats" class="anchor" href="#cgminerlcdstats"><span class="octicon octicon-link"></span></a>cgminerLCDStats</h1>
+
+<p>Simple script to get data from cgminer API and display it on the "LCD System Info" display. See links below for where you can purchase the display used for this project.  </p>
+
+<p>Update: The script now shows an MtGox price ticker alternating on the line with the WU: cgminer stats. There is a delay of a few seconds when updating the ticker. Under no circumstances should it be used for time sensitive activities such as trading.  It is provided only as a convenience for the user.  </p>
+
+<p>If you feel this code is useful, please consider a donation to:<br>
+  BTC address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed</p>
+
+<p>Run as root to avoid permissions issues (see note below): sudo python cgminerLCDStats.py [options]</p>
+
+<p>Usage: cgminerLCDStats.py [options] arg                                                                                                                                                            </p>
+
+<p>Options:<br><code>-h, --help            show this help message and exit</code><br><code>-s, --simple          Show simple display layout instead of default</code><br><code>-d REFRESHDELAY, --refresh-delay=REFRESHDELAY  where  REFRESHDELAY = Time delay between screen/API refresh</code><br><code>-i HOST, --host=HOST  I.P. Address of cgminer API host</code><br><code>-p PORT, --port=PORT  Port of cgminer API</code><br><code>-c TIMEDISPLAYFORMAT, --clock=TIMEDISPLAYFORMAT  Options 12 or 24 - Clock Display 12hr / 24hr</code><br><code>--mtgoxDisplayOff     If specified, MtGox ticker will not be displayed</code><br><code>--mtgoxToggleRate=MTGOXTOGGLERATE  Rate to toggle display between WU: and MtGox in seconds</code><br><code>--mtgoxTimeout=MTGOXTIMEOUT  MtGox API socket timeout in seconds -</code><br><code>default 3 seconds, increase if logging exsessivetime-outs</code><br><code>--mtgoxForce          If specified, MtGox ticker will always display</code>  </p>
+
+<p>Note: To avoid the need to run the script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/</p>
+
+<p>Where to buy the LCD Display Unit:<br><a href="http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&amp;hash=item1c2c6fc700">http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&amp;hash=item1c2c6fc700</a></p>
+
+<p>For more specifics about the "LCD sys info" display this code supports, see:<br><a href="http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info">http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info</a><br><a href="https://github.com/dangardner/pylcdsysinfo">https://github.com/dangardner/pylcdsysinfo</a></p>
+
+<p>Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
+      He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
+      <a href="https://bitcointalk.org/index.php?action=profile;u=36044">https://bitcointalk.org/index.php?action=profile;u=36044</a></p>
+
+<p>Copyright (c) 2013 Cardinal Commmunications</p>
+
+<p>Permission to use, copy, modify, and/or distribute this software for any 
+purpose with or without fee is hereby granted, provided that the above 
+copyright notice and this permission notice appear in all copies.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES 
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY 
+SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES 
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN 
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR 
+IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</p>
+
+<p>Please check the library code module "pylcdsysinfo.py" for copyright and author information.</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
