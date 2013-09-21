@@ -22,7 +22,8 @@ Options:
   `--mtgoxDisplayOff     If specified, MtGox ticker will not be displayed`  
   `--mtgoxToggleRate=MTGOXTOGGLERATE  Rate to toggle display between WU: and MtGox in seconds`  
   `--mtgoxTimeout=MTGOXTIMEOUT  MtGox API socket timeout in seconds - `    
-                                  `default 3 seconds, increase if logging exsessivetime-outs`    
+                                  `default 3 seconds, increase if logging exsessivetime-outs`  
+  `--mtgoxForce          If specified, MtGox ticker will always display`  
   
 
 Note: To avoid the need to run the script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/
