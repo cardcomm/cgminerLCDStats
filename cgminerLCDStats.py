@@ -390,7 +390,7 @@ if __name__ == "__main__":
     parser.add_option("--mtgoxDisplayOff", action="store_true", dest="mtgoxDisplayOff", default=False, help="If specified, MtGox ticker will not be displayed") 
     parser.add_option("--mtgoxToggleRate", type="float", dest="mtgoxToggleRate", default=15, help="Rate to toggle display between WU: and MtGox in seconds")
     parser.add_option("--mtgoxTimeout", type="float", dest="mtgoxTimeout", default=4, help="MtGox API socket timeout in seconds")
-    parser.add_option("--mtgoxForce", dest="mtgoxForce", default=False, help="True/False Force MtGox ticker to always display")
+    parser.add_option("--mtgoxForce", action="store_true", dest="mtgoxForce", default=False, help="If specified, MtGox ticker will always display")
 
     # parse the command line arguments and populate the variables
     (options, args) = parser.parse_args()    
@@ -442,9 +442,8 @@ if __name__ == "__main__":
                 if mtgoxForce == True:      # did user select to force mtGox to always display?
                     mtgoxToggleState = True # if so, force flag
                 elif mtgoxForce == False:
-                    mtgoxToggleState = timedToggle.getToggleStatus()
+                    mtgoxToggleState = timedToggle.getToggleStatus() # returns true if time to toggle
                     
-                # mtgoxToggleState = True  #TODO TEST USE to force mtGox display - remove
                 if (mtgoxToggleState == True):
                     mtgoxPreviousPrice = mtgoxLastPrice
                     mtgoxLastPrice = str(getMtGoxPrice(mtgoxTimeout))   # Call MtGox API to get "Last Price" in USD
