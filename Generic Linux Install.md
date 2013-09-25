@@ -14,9 +14,6 @@ To begin the installation, I logged in to the Pi via ssh from my main machine. I
 Ok, let's get started. Log on to your Pi with this command:  
 ssh userid@YOURIP    - example: ssh pi@192.168.1.111
 
-Work in Progress!!! DO NOT USE YET 
------------------------------------------------------------------------------------------------------
-
 Make sure the OS is up to date (Optional step - skip this is you want too, or are already on a recent version):  
 `sudo apt-get update`
 
