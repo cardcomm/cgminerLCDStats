@@ -10,6 +10,7 @@ I started with a fresh install of the current version of the Operating System. I
 
 To begin the installation, I logged in to the Pi via ssh from my main machine. I find it way easier to interact with the Pi command line over ssh, rather than logging into the Pi itself. When entering the following commands, it's easiest to copy and paste them into the terminal window. Wait for each step to complete and watch for errors. Some of the updates require user interaction, so say yes if prompted. 
 
+#### Update Operating System and Get Dependancies ####
 Ok, let's get started. Log on to your Pi with this command:  
 ssh userid@YOURIP    - example: `ssh pi@192.168.1.111`
 
@@ -30,13 +31,15 @@ Install pyUSB library (recall that you may have to change "python" to "python2")
 `cd ~`  
 `git clone https://github.com/walac/pyusb.git`  
 `cd pyusb`  
-`sudo python setup.py install`  
-
+`sudo python setup.py install` 
+ 
+#### Install the Script ####
 Install the cgminerLCDStats.py script and required modules:  
 `cd ~`  
 `git clone https://github.com/cardcomm/cgminerLCDStats.git`  
 `cd cgminerLCDStats`  
 
+#### Test It! ####
 Ok, that's it. We should be ready to go. Make sure the LCD display is connected, and let's start the script. You can start it with the default options using the following command (again, substitute python2 if required):  
 `sudo python cgminerLCDStats.py`
 
