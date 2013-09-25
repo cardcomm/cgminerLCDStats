@@ -1,4 +1,3 @@
-
 "Generic Linux" installation Guide for cgminer the LCD Stats Script. 
 -----------------------------------------------------------------------------------------------------
 
@@ -37,7 +36,7 @@ Install the cgminerLCDStats.py script and required modules:
 `git clone https://github.com/cardcomm/cgminerLCDStats.git`  
 `cd cgminerLCDStats`  
 
-Ok, that's it. We should be ready to go. Make sure the LCD display is connected, and let's start the script. You can start it with the default options using the following command:  
+Ok, that's it. We should be ready to go. Make sure the LCD display is connected, and let's start the script. You can start it with the default options using the following command (again, substitute python2 if required):  
 `sudo python cgminerLCDStats.py`
 
 If everything went well, you should now see your cgminer stats displayed on the USB screen. Enjoy!
