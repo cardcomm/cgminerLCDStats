@@ -1,4 +1,5 @@
 
+
 "Generic Linux" installation Guide for cgminer the LCD Stats Script. 
 -----------------------------------------------------------------------------------------------------
 
@@ -46,8 +47,7 @@ Ok, that's it. We should be ready to go. Make sure the LCD display is connected,
 If everything went well, you should now see your cgminer stats displayed on the USB screen. Enjoy!
 
 Note: You can customize certain aspects of the script using the following command line options:
-
-Options:  
+ 
   `-h, --help            show this help message and exit`  
   `-s, --simple          Show simple display layout instead of default`  
   `-d REFRESHDELAY, --refresh-delay=REFRESHDELAY  where  REFRESHDELAY = Time delay between screen/API refresh`                          
@@ -57,5 +57,6 @@ Options:
   `--mtgoxDisplayOff     If specified, MtGox ticker will not be displayed`  
   `--mtgoxToggleRate=MTGOXTOGGLERATE  Rate to toggle display between WU: and MtGox in seconds`  
   `--mtgoxTimeout=MTGOXTIMEOUT  MtGox API socket timeout in seconds - `    
-                                  `default 3 seconds, increase if logging exsessivetime-outs`    
+                                  `default 3 seconds, increase if logging exsessivetime-outs`  
+  `--mtgoxForce          If specified, MtGox ticker will always display`  
   
