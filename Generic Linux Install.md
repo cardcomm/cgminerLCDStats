@@ -45,8 +45,10 @@ Ok, that's it. We should be ready to go. Make sure the LCD display is connected,
 
 If everything went well, you should now see your cgminer stats displayed on the USB screen. Enjoy!
 
-**Note:** You can customize certain aspects of the script using the following command line options:
- 
+**Note:** You can customize certain aspects of the script using the following command line options. For example, you could start the script and force it to always show the mtGox ticker with this command:  
+`sudo python cgminerLCDStats.py --mtgoxForce`  
+
+Complete List of Command Line Options:   
   `-h, --help            show this help message and exit`  
   `-s, --simple          Show simple display layout instead of default`  
   `-d REFRESHDELAY, --refresh-delay=REFRESHDELAY  where  REFRESHDELAY = Time delay between screen/API refresh`                          
