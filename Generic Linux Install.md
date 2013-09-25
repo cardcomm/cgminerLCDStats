@@ -1,5 +1,4 @@
 
-
 "Generic Linux" installation Guide for cgminer the LCD Stats Script. 
 -----------------------------------------------------------------------------------------------------
 
@@ -12,7 +11,7 @@ I started with a fresh install of the current version of the Operating System. I
 To begin the installation, I logged in to the Pi via ssh from my main machine. I find it way easier to interact with the Pi command line over ssh, rather than logging into the Pi itself. When entering the following commands, it's easiest to copy and paste them into the terminal window. Wait for each step to complete and watch for errors. Some of the updates require user interaction, so say yes if prompted. 
 
 Ok, let's get started. Log on to your Pi with this command:  
-ssh userid@YOURIP    - example: ssh pi@192.168.1.111
+ssh userid@YOURIP    - example: `ssh pi@192.168.1.111`
 
 Make sure the OS is up to date (Optional step - skip this is you want too, or are already on a recent version):  
 `sudo apt-get update`
