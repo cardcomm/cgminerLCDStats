@@ -1,51 +1,17 @@
+"Generic Linux" How to install Guide for cgminer the LCD Stats Script.
+===============
 
-"Generic Linux" How to install Guide for cgminer the LCD Stats Script. 
------------------------------------------------------------------------------------------------------
+Simple script to get data from cgminer API and display it on the "LCD System Info" display. See links below for where you can purchase the display used for this project.  
 
-This is a quick guide to installing the cgminerLCDStats.py script on a "generic" version of Linux. In other words, I hope to give you enough information about the dependancies required to enable you to get the script working on the Linux or Unix variant of your choice.
+Update: The script now shows an MtGox price ticker alternating on the line with the WU: cgminer stats. There is a delay of a few seconds when updating the ticker. Under no circumstances should it be used for time sensitive activities such as trading.  It is provided only as a convenience for the user.  
 
-For my example, I'm using Raspian Linux installed on a Raspberry Pi.
+If you feel this code is useful, please consider a donation to:  
+  BTC address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed
 
-I started with a fresh install of the current version of the Operating System. I took the usual steps to install cgminer and verify it was working correctly. For convenience sake, I also configured my router such that that my Pi would come up on the same internal I.P. address each time it reboots.
+Run as root to avoid permissions issues (see note below): sudo python cgminerLCDStats.py [options]
 
-To begin the installation, I logged in to the Pi via ssh from my main machine. I find it way easier to interact with the Pi command line over ssh, rather than logging into the Pi itself. When entering the following commands, it's easiest to copy and paste them into the terminal window. Wait for each step to complete and watch for errors. Some of the updates require user interaction, so say yes if prompted. 
-
-Ok, let's get started. Log on to your Pi with this command:  
-ssh minepeon@YOURIP    - example: ssh minepeon@192.168.1.111
-
-Make sure the OS is up to date (Optional step - skip this is you want too, or are already on a recent version):  
-`sudo pacman -Syu`
-
-Get the "git" utility for downloading packages:  
-`sudo pacman -S git`
-
-Make sure we have all the latest MinePeon packages (Optional step - skip this is you want too, or are already on a recent version):  
-`cd /opt/minepeon/`  
-`git pull`  
-`cd /opt/minepeon/http/`  
-`git pull`  
-
-Optional: Verify Python2 is already installed (it should be) - current version is Python 2.7.5:  
-`python2 -V`
-
-Install pyUSB library:  
-`cd ~`  
-`git clone https://github.com/walac/pyusb.git`  
-`cd pyusb`  
-`sudo python2 setup.py install`  
-
-Install the cgminerLCDStats.py script and required modules:  
-`cd ~`  
-`git clone https://github.com/cardcomm/cgminerLCDStats.git`  
-`cd cgminerLCDStats`  
-
-Ok, that's it. We should be ready to go. Make sure the LCD display is connected, and let's start the script. You can start it with the default options using the following command:  
-`sudo python2 cgminerLCDStats.py`
-
-If everything went well, you should now see your cgminer stats displayed on the USB screen. Enjoy!
-
-Note: By default, the display refreshes every 30 seconds. You can change this, and other behavior using the following command line options:
-
+Usage: cgminerLCDStats.py [options] arg                                                                                                                                                            
+                                                                                                                                                                                                   
 Options:  
   `-h, --help            show this help message and exit`  
   `-s, --simple          Show simple display layout instead of default`  
@@ -56,6 +22,35 @@ Options:
   `--mtgoxDisplayOff     If specified, MtGox ticker will not be displayed`  
   `--mtgoxToggleRate=MTGOXTOGGLERATE  Rate to toggle display between WU: and MtGox in seconds`  
   `--mtgoxTimeout=MTGOXTIMEOUT  MtGox API socket timeout in seconds - `    
-                                  `default 3 seconds, increase if logging exsessivetime-outs` 
-                                  
-                                  
+                                  `default 3 seconds, increase if logging exsessivetime-outs`  
+  `--mtgoxForce          If specified, MtGox ticker will always display`  
+  
+
+Note: To avoid the need to run the script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/
+                        
+ Where to buy the LCD Display Unit:  
+  http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&hash=item1c2c6fc700
+
+ For more specifics about the "LCD sys info" display this code supports, see:   
+  http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info  
+  https://github.com/dangardner/pylcdsysinfo
+
+Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
+      He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
+      https://bitcointalk.org/index.php?action=profile;u=36044
+
+Copyright (c) 2013 Cardinal Commmunications
+
+Permission to use, copy, modify, and/or distribute this software for any 
+purpose with or without fee is hereby granted, provided that the above 
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES 
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY 
+SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES 
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN 
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR 
+IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Please check the library code module "pylcdsysinfo.py" for copyright and author information.
