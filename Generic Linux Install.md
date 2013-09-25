@@ -53,5 +53,9 @@ Note: You can customize certain aspects of the script using the following comman
   `--mtgoxToggleRate=MTGOXTOGGLERATE  Rate to toggle display between WU: and MtGox in seconds`  
   `--mtgoxTimeout=MTGOXTIMEOUT  MtGox API socket timeout in seconds - `    
                                   `default 3 seconds, increase if logging exsessivetime-outs`  
-  `--mtgoxForce          If specified, MtGox ticker will always display`  
+  `--mtgoxForce          If specified, MtGox ticker will always display`
+  
+Addtional Note: If you don't want to run the gcminerLCDStats.py script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/ as follows:  
+`cd ~/cgminerLCDStats`
+`sudo mv 99-lcdsysinfo.rules /etc/udev/rules.d/99-lcdsysinfo.rules`  
   
