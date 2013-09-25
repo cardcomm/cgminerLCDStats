@@ -1,3 +1,4 @@
+
 "Generic Linux" installation Guide for cgminer the LCD Stats Script. 
 -----------------------------------------------------------------------------------------------------
 
@@ -21,7 +22,7 @@ Get the "git" utility for downloading packages:
 Verify Python 2 is already installed (it should be) - current version is Python 2.7.5:  
 `python -V`
 
-Note: If you're Python number is greater than 3, you will need to specify a different version when running the script, as version 3 isn't supported. If the above command shows version 3 or later, try this command instead:
+**Note:** If you're Python number is greater than 3, you will need to specify a different version when running the script, as version 3 isn't supported. If the above command shows version 3 or later, try this command instead:
 `python2 -V`
 If that works and shows version 2.7.0 or greater, you should be good to go. Just remember you'll need to change "python" to "python2" in the command to run the script. 
 
@@ -41,7 +42,7 @@ Ok, that's it. We should be ready to go. Make sure the LCD display is connected,
 
 If everything went well, you should now see your cgminer stats displayed on the USB screen. Enjoy!
 
-Note: You can customize certain aspects of the script using the following command line options:
+**Note:** You can customize certain aspects of the script using the following command line options:
  
   `-h, --help            show this help message and exit`  
   `-s, --simple          Show simple display layout instead of default`  
@@ -55,7 +56,7 @@ Note: You can customize certain aspects of the script using the following comman
                                   `default 3 seconds, increase if logging exsessivetime-outs`  
   `--mtgoxForce          If specified, MtGox ticker will always display`
   
-Addtional Note: If you don't want to run the gcminerLCDStats.py script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/ as follows:  
+**Addtional Note:** If you don't want to run the gcminerLCDStats.py script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/ as follows:  
 `cd ~/cgminerLCDStats`  
 `sudo mv 99-lcdsysinfo.rules /etc/udev/rules.d/99-lcdsysinfo.rules`  
   
