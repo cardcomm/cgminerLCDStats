@@ -22,14 +22,18 @@ Make sure the OS is up to date (Optional step - skip this is you want too, or ar
 Get the "git" utility for downloading packages:  
 `sudo apt-get install git`
 
-Verify Python2 is already installed (it should be) - current version is Python 2.7.5:  
-`python2 -V`
+Verify Python 2 is already installed (it should be) - current version is Python 2.7.5:  
+`python -V`
 
-Install pyUSB library:  
+Note: If you're Python number is greater than 3, you will need to specify a different version when running the script, as version 3 isn't supported. If the above command shows version 3 or later, try this command instead:
+`python2 -V`
+If that works and shows version 2.7.0 or greater, you should be good to go. Just remember you'll need to change "python" to "python2" in the command to run the script. 
+
+Install pyUSB library (recall that you may have to change "python" to "python2"):  
 `cd ~`  
 `git clone https://github.com/walac/pyusb.git`  
 `cd pyusb`  
-`sudo python2 setup.py install`  
+`sudo python setup.py install`  
 
 Install the cgminerLCDStats.py script and required modules:  
 `cd ~`  
@@ -37,11 +41,11 @@ Install the cgminerLCDStats.py script and required modules:
 `cd cgminerLCDStats`  
 
 Ok, that's it. We should be ready to go. Make sure the LCD display is connected, and let's start the script. You can start it with the default options using the following command:  
-`sudo python2 cgminerLCDStats.py`
+`sudo python cgminerLCDStats.py`
 
 If everything went well, you should now see your cgminer stats displayed on the USB screen. Enjoy!
 
-Note: By default, the display refreshes every 30 seconds. You can change this, and other behavior using the following command line options:
+Note: You can customize certain aspects of the script using the following command line options:
 
 Options:  
   `-h, --help            show this help message and exit`  
