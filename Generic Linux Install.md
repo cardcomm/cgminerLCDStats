@@ -56,6 +56,6 @@ Note: You can customize certain aspects of the script using the following comman
   `--mtgoxForce          If specified, MtGox ticker will always display`
   
 Addtional Note: If you don't want to run the gcminerLCDStats.py script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/ as follows:  
-`cd ~/cgminerLCDStats`
+`cd ~/cgminerLCDStats`  
 `sudo mv 99-lcdsysinfo.rules /etc/udev/rules.d/99-lcdsysinfo.rules`  
   
