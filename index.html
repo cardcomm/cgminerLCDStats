@@ -33,7 +33,11 @@
         <h1>
 <a name="cgminerlcdstats" class="anchor" href="#cgminerlcdstats"><span class="octicon octicon-link"></span></a>cgminer LCD Stats</h1>
 
-<p class="startBlock">Simple script to get data from cgminer API and display it on the "LCD System Info" display. The script now shows an MtGox price ticker alternating on the line with the WU: cgminer stats. There is a delay of a few seconds when updating the ticker. Under no circumstances should it be used for time sensitive activities such as trading.  It is provided only as a convenience for the user.</p>
+<p class="startBlock">This simple script will get data from cgminer API and display it on the "LCD System Info" display. The script can also display other useful information, such as a MtGox price ticker and clock.</p>
+
+<p class="startBlock">It's very handy for monitoring the status of your mining rig. If a problem occurs with the rig, the LCD display displays an error message notifying you to check on your miner's status.</p>
+
+<p class="startBlock">Options are available for controlling many aspects of the display. You can even configure it to display data from any cgminer instance on your local network. </p>
 
 <p class="startBlock">See links below for where you can purchase the display used for this project. </p>
 
@@ -48,7 +52,7 @@
 
 <h6>Options:</h6><br><code>-h, --help            show this help message and exit</code><br><code>-s, --simple          Show simple display layout instead of default</code><br><code>-d REFRESHDELAY, --refresh-delay=REFRESHDELAY  where  REFRESHDELAY = Time delay between screen/API refresh</code><br><code>-i HOST, --host=HOST  I.P. Address of cgminer API host</code><br><code>-p PORT, --port=PORT  Port of cgminer API</code><br><code>-c TIMEDISPLAYFORMAT, --clock=TIMEDISPLAYFORMAT  Options 12 or 24 - Clock Display 12hr / 24hr</code><br><code>--mtgoxDisplayOff     If specified, MtGox ticker will not be displayed</code><br><code>--mtgoxToggleRate=MTGOXTOGGLERATE  Rate to toggle display between WU: and MtGox in seconds</code><br><code>--mtgoxTimeout=MTGOXTIMEOUT  MtGox API socket timeout in seconds -</code><br><code>default 3 seconds, increase if logging exsessivetime-outs</code><br><code>--mtgoxForce          If specified, MtGox ticker will always display</code>  </p>
 
-<p><h6>Note:</h6> To avoid the need to run the script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/</p>
+<p><h6>For more specifics on how to install and run this script, check out the generic Linux <a href='https://github.com/cardcomm/cgminerLCDStats/blob/master/Generic%20Linux%20Install.md'>installation instructions.</a></h6></p>
 
 <p><h4>Where to buy the LCD Display Unit:<h4></h4><br><a href="http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&amp;hash=item1c2c6fc700">http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&amp;hash=item1c2c6fc700</a></p>
 
