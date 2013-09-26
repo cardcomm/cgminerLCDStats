@@ -70,16 +70,10 @@ h3 {
 	font-size: 18px;
 }
 
-h4, h5 {
+h4, h5, h6 {
 	display: inline;
 	font-family: Arvo, Monaco, serif;
 	font-weight: 700;
-}
-
-h6	{
-	display: inline;
-	font-family: Arvo, Monaco, serif;
-	font-weight: 400;
 }
 
 a {
