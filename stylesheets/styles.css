@@ -70,10 +70,16 @@ h3 {
 	font-size: 18px;
 }
 
-h4, h5, h6 {
+h4, h5	{
 	display: inline;
 	font-family: Arvo, Monaco, serif;
 	font-weight: 700;
+}
+
+h6 {
+	display: inline;
+	font-family: Arvo, Monaco, serif;
+	font-weight: bold;
 }
 
 a {
@@ -156,7 +162,7 @@ img {
 code, pre {
 	font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
   color:#000;
-  font-size:14px;
+  font-size:12px;
 }
 
 pre {
@@ -224,6 +230,10 @@ header {
 }
 
 p.header {
+	font-size: 16px;
+}
+
+p.startBlock {
 	font-size: 16px;
 }
 

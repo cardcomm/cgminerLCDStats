@@ -33,9 +33,9 @@
         <h1>
 <a name="cgminerlcdstats" class="anchor" href="#cgminerlcdstats"><span class="octicon octicon-link"></span></a>cgminer LCD Stats</h1>
 
-<p>Simple script to get data from cgminer API and display it on the "LCD System Info" display. The script now shows an MtGox price ticker alternating on the line with the WU: cgminer stats. There is a delay of a few seconds when updating the ticker. Under no circumstances should it be used for time sensitive activities such as trading.  It is provided only as a convenience for the user.</p>
+<p class="startBlock">Simple script to get data from cgminer API and display it on the "LCD System Info" display. The script now shows an MtGox price ticker alternating on the line with the WU: cgminer stats. There is a delay of a few seconds when updating the ticker. Under no circumstances should it be used for time sensitive activities such as trading.  It is provided only as a convenience for the user.</p>
 
-<p>See links below for where you can purchase the display used for this project. </p>
+<p class="startBlock">See links below for where you can purchase the display used for this project. </p>
 
 <img src="https://raw.github.com/cardcomm/cgminerLCDStats/master/lcd_and_pi-small.jpg"></img>
 
@@ -44,17 +44,17 @@
 
 <p>Run as root to avoid permissions issues (see note below): sudo python cgminerLCDStats.py [options]</p>
 
-<p>Usage: cgminerLCDStats.py [options] arg                                                                                                                                                            </p>
+<p><h6>Usage:</h6> cgminerLCDStats.py [options] arg</br>
 
-<p>Options:<br><code>-h, --help            show this help message and exit</code><br><code>-s, --simple          Show simple display layout instead of default</code><br><code>-d REFRESHDELAY, --refresh-delay=REFRESHDELAY  where  REFRESHDELAY = Time delay between screen/API refresh</code><br><code>-i HOST, --host=HOST  I.P. Address of cgminer API host</code><br><code>-p PORT, --port=PORT  Port of cgminer API</code><br><code>-c TIMEDISPLAYFORMAT, --clock=TIMEDISPLAYFORMAT  Options 12 or 24 - Clock Display 12hr / 24hr</code><br><code>--mtgoxDisplayOff     If specified, MtGox ticker will not be displayed</code><br><code>--mtgoxToggleRate=MTGOXTOGGLERATE  Rate to toggle display between WU: and MtGox in seconds</code><br><code>--mtgoxTimeout=MTGOXTIMEOUT  MtGox API socket timeout in seconds -</code><br><code>default 3 seconds, increase if logging exsessivetime-outs</code><br><code>--mtgoxForce          If specified, MtGox ticker will always display</code>  </p>
+<h6>Options:</h6><br><code>-h, --help            show this help message and exit</code><br><code>-s, --simple          Show simple display layout instead of default</code><br><code>-d REFRESHDELAY, --refresh-delay=REFRESHDELAY  where  REFRESHDELAY = Time delay between screen/API refresh</code><br><code>-i HOST, --host=HOST  I.P. Address of cgminer API host</code><br><code>-p PORT, --port=PORT  Port of cgminer API</code><br><code>-c TIMEDISPLAYFORMAT, --clock=TIMEDISPLAYFORMAT  Options 12 or 24 - Clock Display 12hr / 24hr</code><br><code>--mtgoxDisplayOff     If specified, MtGox ticker will not be displayed</code><br><code>--mtgoxToggleRate=MTGOXTOGGLERATE  Rate to toggle display between WU: and MtGox in seconds</code><br><code>--mtgoxTimeout=MTGOXTIMEOUT  MtGox API socket timeout in seconds -</code><br><code>default 3 seconds, increase if logging exsessivetime-outs</code><br><code>--mtgoxForce          If specified, MtGox ticker will always display</code>  </p>
 
-<p>Note: To avoid the need to run the script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/</p>
+<p><h6>Note:</h6> To avoid the need to run the script as root, move the 99-lcdsysinfo.rules file to /etc/udev/rules.d/</p>
 
 <p><h4>Where to buy the LCD Display Unit:<h4></h4><br><a href="http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&amp;hash=item1c2c6fc700">http://www.ebay.com/itm/USB-2-8-TFT-LCD-module-LCD-sys-info-display-temperature-fan-AIDA64-LCD-Smartie-/121004607232?pt=LH_DefaultDomain_0&amp;hash=item1c2c6fc700</a></p>
 
 <p><h4>For more specifics about the "LCD sys info" display this code supports, see:<br></h4><a href="http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info">http://coldtearselectronics.wikispaces.com/USB+LCD+-+LCD+System+info</a><br><a href="https://github.com/dangardner/pylcdsysinfo">https://github.com/dangardner/pylcdsysinfo</a></p>
 
-<p>Note: A HUGE thank you goes out to Kano for is invaluable assitance with this code.
+<p><h6>Note:</h6> A HUGE thank you goes out to Kano for is invaluable assitance with this code.
       He's a key developer on the cgminer project, and was a big help in sorting out problems I had writing this script.
       <a href="https://bitcointalk.org/index.php?action=profile;u=36044">https://bitcointalk.org/index.php?action=profile;u=36044</a></p>
 
