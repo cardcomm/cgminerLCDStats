@@ -147,6 +147,24 @@ hr {
 
 /* Images */
 
+img.mainLogo {
+  position: relative;
+  margin: 0 auto;
+  max-width: 650px;
+  padding: 0px;
+  margin: 0px 15px 0px 0px;
+  border: none;
+}
+
+img.logo {
+  position: relative;
+  margin: 0 auto;
+  max-width: 650px;
+  padding: 5px;
+  margin: 0px 0px 0px 15px;
+  border: none;
+}
+
 img {
   position: relative;
   margin: 0 auto;
@@ -156,11 +174,10 @@ img {
   border: 1px solid #ccc;
 }
 
-
 /* Code blocks */
 
 code, pre {
-	font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
   color:#000;
   font-size:12px;
 }
