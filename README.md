@@ -6,7 +6,7 @@ Simple script to get data from cgminer API and display it on the "LCD System Inf
 Update: The script now shows an MtGox price ticker alternating on the line with the WU: cgminer stats. There is a delay of a few seconds when updating the ticker. Under no circumstances should it be used for time sensitive activities such as trading.  It is provided only as a convenience for the user.  
 
 If you feel this code is useful, please consider a donation to:  
-  BTC address: 15aGZp2pCbpAFHcjHVrx2G746PXFo9VEed
+  BTC address: 1CQfpMHQ5zVuZ5i9uxSHSSx4J8ZhehSjn3
 
 Run as root to avoid permissions issues (see note below): sudo python cgminerLCDStats.py [options]
 
