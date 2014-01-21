@@ -85,7 +85,7 @@ class mtgoxAPI:
 			if isinstance(enc, str) and enc.lower() == 'gzip':
 				buff = io.BytesIO(response.read())
 				response = gzip.GzipFile(fileobj=buff)
-				self.lastMtGox = json.load(response)
+			self.lastMtGox = json.load(response)
 				
 		return self.lastMtGox
 
